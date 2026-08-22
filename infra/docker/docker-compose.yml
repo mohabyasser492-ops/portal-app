@@ -1,0 +1,4 @@
+services:
+  api:
+    build: ../../services/api/src/PortalApp.Api
+    ports: ["7047:8080"]

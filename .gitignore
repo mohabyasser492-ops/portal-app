@@ -1,0 +1,213 @@
+# ============================================================
+# Portal App: secrets and local environment
+# ============================================================
+
+.env
+.env.*
+!.env.example
+
+secrets/
+credentials/
+local-config/
+
+*.pfx
+*.p12
+*.jks
+*.keystore
+*.mobileprovision
+*.cer
+*.pem
+*.key
+
+# Firebase files are environment-specific
+google-services.json
+GoogleService-Info.plist
+
+# Keep templates if added later
+!google-services.example.json
+!GoogleService-Info.example.plist
+
+
+# ============================================================
+# Flutter and Dart
+# ============================================================
+
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+coverage/
+
+.flutter-plugins
+.flutter-plugins-dependencies
+
+**/doc/api/
+**/ios/Flutter/ephemeral/
+**/ios/Pods/
+**/ios/.symlinks/
+**/macos/Flutter/ephemeral/
+
+# Generated localization and model files
+# Keep generated Dart files tracked only if the team decides to.
+# For now, ignore code-generator outputs.
+**/*.g.dart
+**/*.freezed.dart
+
+# Flutter generated plugin registrants
+**/generated_plugin_registrant.dart
+
+
+# ============================================================
+# Android
+# ============================================================
+
+**/android/.gradle/
+**/android/local.properties
+**/android/key.properties
+**/android/captures/
+
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+
+*.apk
+*.aab
+*.apks
+
+
+# ============================================================
+# iOS and Xcode
+# ============================================================
+
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/ephemeral/
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+
+**/xcuserdata/
+**/*.xcuserstate
+**/*.xcworkspace/xcuserdata/
+
+*.ipa
+*.dSYM
+*.dSYM.zip
+
+
+# ============================================================
+# ASP.NET Core and .NET
+# ============================================================
+
+**/bin/
+**/obj/
+**/TestResults/
+**/coverage-results/
+
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.ncrunch*
+*.DotSettings.user
+
+appsettings.Local.json
+appsettings.*.Local.json
+
+
+# ============================================================
+# VS Code, Visual Studio, IntelliJ, and Android Studio
+# ============================================================
+
+.idea/
+**/.idea/
+
+.vs/
+
+*.iml
+*.ipr
+*.iws
+
+# Keep the shared repository VS Code configuration
+!.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+
+# ============================================================
+# Operating system files
+# ============================================================
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+$RECYCLE.BIN/
+
+
+# ============================================================
+# Logs and temporary files
+# ============================================================
+
+*.log
+logs/
+
+*.tmp
+*.temp
+*.bak
+*.old
+*.orig
+
+*.swp
+*.swo
+*~
+
+.cache/
+temp/
+tmp/
+
+
+# ============================================================
+# Azure, infrastructure, and deployment
+# ============================================================
+
+.azure/
+.azurite/
+
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Generated deployment output
+infra/output/
+infra/generated/
+
+
+# ============================================================
+# Node tooling, if introduced later
+# ============================================================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# ============================================================
+# Local databases and emulator state
+# ============================================================
+
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+.firebase/

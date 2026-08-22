@@ -1,0 +1,5 @@
+name: Feature
+body:
+  - type: textarea
+    id: criteria
+    attributes: {label: Acceptance criteria}

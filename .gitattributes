@@ -1,0 +1,54 @@
+# Normalize text files in the Git repository
+* text=auto
+
+# Cross-platform source and configuration files use LF
+*.dart text eol=lf
+*.kt text eol=lf
+*.kts text eol=lf
+*.swift text eol=lf
+*.cs text eol=lf
+*.csproj text eol=lf
+*.props text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.xml text eol=lf
+*.plist text eol=lf
+*.md text eol=lf
+*.mmd text eol=lf
+*.csv text eol=lf
+*.http text eol=lf
+*.bicep text eol=lf
+*.bicepparam text eol=lf
+*.gradle text eol=lf
+*.xcconfig text eol=lf
+*.storyboard text eol=lf
+Dockerfile text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+
+# Linux and macOS scripts must use LF
+*.sh text eol=lf
+
+# Windows scripts use CRLF
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files must never be modified as text
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.jar binary
+*.apk binary
+*.aab binary
+*.ipa binary
+*.p12 binary
+*.pfx binary
+*.jks binary
+*.keystore binary

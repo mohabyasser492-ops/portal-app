@@ -1,0 +1,5 @@
+name: Bug
+body:
+  - type: textarea
+    id: steps
+    attributes: {label: Reproduction steps}

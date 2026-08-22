@@ -1,0 +1,31 @@
+# Portal App Implementation Roadmap
+
+1. `feature/PORTAL-001-repo-foundation`
+2. `feature/PORTAL-002-engineering-documentation`
+3. `feature/PORTAL-003-requirements-traceability`
+4. `feature/PORTAL-004-security-threat-model`
+5. `feature/PORTAL-005-infrastructure-foundation`
+6. `feature/PORTAL-006-design-system`
+7. `feature/PORTAL-007-navigation-shell`
+8. `feature/PORTAL-008-local-cache`
+9. `feature/PORTAL-009-entra-authentication`
+10. `feature/PORTAL-010-api-security`
+11. `feature/PORTAL-011-graph-infrastructure`
+12. `feature/PORTAL-012-employee-profile`
+13. `feature/PORTAL-013-announcements`
+14. `feature/PORTAL-014-home-dashboard`
+15. `feature/PORTAL-015-services-directory`
+16. `feature/PORTAL-016-requests-read`
+17. `feature/PORTAL-017-leave-request`
+18. `feature/PORTAL-018-permission-request`
+19. `feature/PORTAL-019-leave-balance`
+20. `feature/PORTAL-020-manager-approvals`
+21. `feature/PORTAL-021-payroll-documents`
+22. `feature/PORTAL-022-attendance`
+23. `feature/PORTAL-023-incident-reporting`
+24. `feature/PORTAL-024-push-notifications`
+25. `feature/PORTAL-025-offline-retry`
+26. `feature/PORTAL-026-observability`
+27. `feature/PORTAL-027-accessibility-quality`
+28. `feature/PORTAL-028-release-android`
+29. `feature/PORTAL-029-release-ios`

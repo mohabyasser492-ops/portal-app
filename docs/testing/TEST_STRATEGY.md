@@ -1,0 +1,1 @@
+# Portal App Test Strategy
