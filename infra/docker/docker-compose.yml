@@ -1,4 +1,31 @@
+name: portal-app
+
 services:
-  api:
-    build: ../../services/api/src/PortalApp.Api
-    ports: ["7047:8080"]
+  portal-app-api:
+    container_name: portal-app-api
+
+    build:
+      context: ../../services/api
+      dockerfile: src/PortalApp.Api/Dockerfile
+      target: runtime
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      Entra__TenantId: ${ENTRA_TENANT_ID}
+      Entra__ClientId: ${ENTRA_API_CLIENT_ID}
+      SharePoint__Hostname: ${SHAREPOINT_HOSTNAME}
+      SharePoint__SitePath: ${SHAREPOINT_SITE_PATH}
+
+    ports:
+      - "7047:8080"
+
+    restart: unless-stopped
+
+    networks:
+      - portal-app-network
+
+networks:
+  portal-app-network:
+    name: portal-app-network
+    driver: bridge
