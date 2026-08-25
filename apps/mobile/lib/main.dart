@@ -26,9 +26,7 @@ class PortalThemePreviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Portal App'),
-      ),
+      appBar: AppBar(title: const Text('Portal App')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -42,20 +40,14 @@ class PortalThemePreviewPage extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {},
-            child: const Text('Primary action'),
-          ),
+          ElevatedButton(onPressed: () {}, child: const Text('Primary action')),
           const SizedBox(height: 12),
           OutlinedButton(
             onPressed: () {},
             child: const Text('Secondary action'),
           ),
           const SizedBox(height: 12),
-          TextButton(
-            onPressed: () {},
-            child: const Text('Text action'),
-          ),
+          TextButton(onPressed: () {}, child: const Text('Text action')),
           const SizedBox(height: 24),
           const TextField(
             decoration: InputDecoration(
@@ -73,14 +65,9 @@ class PortalThemePreviewPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: null,
-            child: const Text('Disabled action'),
-          ),
+          ElevatedButton(onPressed: null, child: const Text('Disabled action')),
           const SizedBox(height: 24),
-          const Center(
-            child: CircularProgressIndicator(),
-          ),
+          const Center(child: CircularProgressIndicator()),
         ],
       ),
     );
