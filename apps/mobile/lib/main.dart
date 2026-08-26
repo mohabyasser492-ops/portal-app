@@ -7,6 +7,7 @@ import 'core/widgets/cards/portal_card.dart';
 import 'core/widgets/inputs/portal_text_field.dart';
 import 'core/widgets/status/portal_status_badge.dart';
 import 'core/widgets/feedback/portal_loading_state.dart';
+import 'core/widgets/feedback/portal_empty_state.dart';
 
 void main() {
   runApp(const PortalApp());
@@ -295,6 +296,43 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                     layout: PortalLoadingStateLayout.inline,
                     compact: true,
                     padding: EdgeInsetsDirectional.zero,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: PortalSpacing.xl),
+
+          _PreviewSection(
+            title: 'Empty states',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const PortalCard(
+                  child: PortalEmptyState(
+                    title: 'No announcements',
+                    description: 'New company announcements will appear here.',
+                    icon: Icons.campaign_outlined,
+                  ),
+                ),
+                const SizedBox(height: PortalSpacing.md),
+                PortalCard(
+                  child: PortalEmptyState(
+                    title: 'No search results',
+                    description: 'Try a different service name or clear the search.',
+                    icon: Icons.search_off_outlined,
+                    actionLabel: 'Clear search',
+                    onAction: () {},
+                  ),
+                ),
+                const SizedBox(height: PortalSpacing.md),
+                const PortalCard(
+                  child: PortalEmptyState(
+                    title: 'No recent requests',
+                    description: 'Submitted requests will appear here.',
+                    icon: Icons.description_outlined,
+                    compact: true,
                   ),
                 ),
               ],
