@@ -8,6 +8,7 @@ import 'core/widgets/inputs/portal_text_field.dart';
 import 'core/widgets/status/portal_status_badge.dart';
 import 'core/widgets/feedback/portal_loading_state.dart';
 import 'core/widgets/feedback/portal_empty_state.dart';
+import 'core/widgets/feedback/portal_error_state.dart';
 
 void main() {
   runApp(const PortalApp());
@@ -332,6 +333,64 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                     title: 'No recent requests',
                     description: 'Submitted requests will appear here.',
                     icon: Icons.description_outlined,
+                    compact: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: PortalSpacing.xl),
+
+          _PreviewSection(
+            title: 'Error states',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                PortalCard(
+                  child: PortalErrorState(
+                    title: 'Unable to load employee information',
+                    description: 'Check your internet connection and try again.',
+                    retryLabel: 'Try again',
+                    onRetry: () {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(const SnackBar(content: Text('Retry action selected')));
+                    },
+                  ),
+                ),
+                const SizedBox(height: PortalSpacing.md),
+                PortalCard(
+                  child: PortalErrorState(
+                    title: 'Unable to submit request',
+                    description:
+                        'The request was not submitted. Try again or return to your saved drafts.',
+                    retryLabel: 'Try again',
+                    onRetry: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Request submission retry selected')),
+                      );
+                    },
+                    secondaryActionLabel: 'Return to drafts',
+                    onSecondaryAction: () {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(const SnackBar(content: Text('Return to drafts selected')));
+                    },
+                  ),
+                ),
+                const SizedBox(height: PortalSpacing.md),
+                PortalCard(
+                  child: PortalErrorState(
+                    title: 'Service temporarily unavailable',
+                    description: 'This service cannot be reached right now.',
+                    icon: Icons.cloud_off_outlined,
+                    secondaryActionLabel: 'Go back',
+                    onSecondaryAction: () {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(const SnackBar(content: Text('Go back action selected')));
+                    },
                     compact: true,
                   ),
                 ),
