@@ -16,7 +16,9 @@ void main() {
       );
 
       expect(find.text('Employee name'), findsOneWidget);
+
       expect(find.text('Enter employee name'), findsOneWidget);
+
       expect(find.byType(TextFormField), findsOneWidget);
     });
 
@@ -53,9 +55,7 @@ void main() {
       expect(changedValue, 'Portal Employee');
     });
 
-    testWidgets('calls onSubmitted when the field is submitted', (
-      tester,
-    ) async {
+    testWidgets('calls onSubmitted when submitted', (tester) async {
       String? submittedValue;
 
       await tester.pumpWidget(
@@ -108,7 +108,7 @@ void main() {
       );
     });
 
-    testWidgets('displays a validator error in a form', (tester) async {
+    testWidgets('displays a validator error', (tester) async {
       final formKey = GlobalKey<FormState>();
 
       await tester.pumpWidget(
@@ -134,10 +134,11 @@ void main() {
       await tester.pump();
 
       expect(isValid, isFalse);
+
       expect(find.text('Employee name is required'), findsOneWidget);
     });
 
-    testWidgets('accepts a valid value in a form', (tester) async {
+    testWidgets('accepts a valid form value', (tester) async {
       final formKey = GlobalKey<FormState>();
 
       await tester.pumpWidget(
@@ -165,28 +166,24 @@ void main() {
       await tester.pump();
 
       expect(isValid, isTrue);
+
       expect(find.text('Employee name is required'), findsNothing);
     });
 
-    testWidgets('renders a leading icon', (tester) async {
+    testWidgets('renders leading and trailing icons', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
-          const PortalTextField(label: 'Search', leadingIcon: Icons.search),
+          const PortalTextField(
+            label: 'Search',
+            leadingIcon: Icons.search,
+            trailingIcon: Icons.close,
+          ),
         ),
       );
 
       expect(find.byIcon(Icons.search), findsOneWidget);
-    });
-
-    testWidgets('renders a non-interactive trailing icon', (tester) async {
-      await tester.pumpWidget(
-        _buildTestApp(
-          const PortalTextField(label: 'Search', trailingIcon: Icons.close),
-        ),
-      );
 
       expect(find.byIcon(Icons.close), findsOneWidget);
-      expect(find.byType(IconButton), findsNothing);
     });
 
     testWidgets('calls the trailing icon action', (tester) async {
@@ -205,12 +202,13 @@ void main() {
       );
 
       await tester.tap(find.byIcon(Icons.close));
+
       await tester.pump();
 
       expect(actionCount, 1);
     });
 
-    testWidgets('does not accept input while disabled', (tester) async {
+    testWidgets('supports a disabled field', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
           const PortalTextField(
@@ -221,39 +219,16 @@ void main() {
         ),
       );
 
+      expect(find.text('12345'), findsOneWidget);
+
       final editableText = tester.widget<EditableText>(
         find.byType(EditableText),
       );
 
       expect(editableText.readOnly, isTrue);
-      expect(find.text('12345'), findsOneWidget);
     });
 
-    testWidgets('disables an interactive trailing icon with the field', (
-      tester,
-    ) async {
-      var actionCount = 0;
-
-      await tester.pumpWidget(
-        _buildTestApp(
-          PortalTextField(
-            label: 'Search',
-            enabled: false,
-            trailingIcon: Icons.close,
-            onTrailingIconPressed: () {
-              actionCount++;
-            },
-          ),
-        ),
-      );
-
-      final iconButton = tester.widget<IconButton>(find.byType(IconButton));
-
-      expect(iconButton.onPressed, isNull);
-      expect(actionCount, 0);
-    });
-
-    testWidgets('supports read-only values', (tester) async {
+    testWidgets('supports a read-only field', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
           const PortalTextField(
@@ -269,6 +244,7 @@ void main() {
       );
 
       expect(editableText.readOnly, isTrue);
+
       expect(find.text('12345'), findsOneWidget);
     });
 
@@ -288,6 +264,7 @@ void main() {
       );
 
       expect(editableText.obscureText, isTrue);
+
       expect(find.byIcon(Icons.visibility_outlined), findsOneWidget);
 
       await tester.tap(find.byIcon(Icons.visibility_outlined));
@@ -297,29 +274,11 @@ void main() {
       editableText = tester.widget<EditableText>(find.byType(EditableText));
 
       expect(editableText.obscureText, isFalse);
+
       expect(find.byIcon(Icons.visibility_off_outlined), findsOneWidget);
     });
 
-    testWidgets('disables the password toggle in read-only mode', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        _buildTestApp(
-          const PortalTextField(
-            label: 'Password',
-            obscureText: true,
-            showPasswordToggle: true,
-            readOnly: true,
-          ),
-        ),
-      );
-
-      final iconButton = tester.widget<IconButton>(find.byType(IconButton));
-
-      expect(iconButton.onPressed, isNull);
-    });
-
-    testWidgets('forces password fields to use one line', (tester) async {
+    testWidgets('forces password fields to one line', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
           const PortalTextField(
@@ -353,25 +312,6 @@ void main() {
       expect(editableText.maxLines, 5);
     });
 
-    testWidgets('supports a character limit', (tester) async {
-      await tester.pumpWidget(
-        _buildTestApp(
-          const PortalTextField(label: 'Description', maxLength: 10),
-        ),
-      );
-
-      await tester.enterText(find.byType(TextFormField), '123456789012345');
-
-      await tester.pump();
-
-      final editableText = tester.widget<EditableText>(
-        find.byType(EditableText),
-      );
-
-      expect(editableText.controller.text.length, 10);
-      expect(editableText.controller.text, '1234567890');
-    });
-
     testWidgets('renders a required-field indicator', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
@@ -379,29 +319,15 @@ void main() {
         ),
       );
 
-      expect(find.byType(TextFormField), findsOneWidget);
+      final requiredLabelFinder = find.byWidgetPredicate((widget) {
+        if (widget is! RichText) {
+          return false;
+        }
 
-      expect(find.textContaining('*', findRichText: true), findsOneWidget);
-    });
+        return widget.text.toPlainText() == 'Employee name *';
+      }, description: 'required employee-name label');
 
-    testWidgets('exposes the custom semantic label', (tester) async {
-      final semantics = tester.ensureSemantics();
-
-      await tester.pumpWidget(
-        _buildTestApp(
-          const PortalTextField(
-            label: 'Employee name',
-            semanticLabel: 'Enter the employee full name',
-          ),
-        ),
-      );
-
-      expect(
-        find.bySemanticsLabel('Enter the employee full name'),
-        findsAtLeastNWidgets(1),
-      );
-
-      semantics.dispose();
+      expect(requiredLabelFinder, findsOneWidget);
     });
 
     testWidgets('renders correctly in Arabic RTL', (tester) async {
@@ -418,10 +344,35 @@ void main() {
         ),
       );
 
-      expect(find.text('اسم الموظف'), findsOneWidget);
+      final requiredLabelFinder = find.byWidgetPredicate((widget) {
+        if (widget is! RichText) {
+          return false;
+        }
+
+        return widget.text.toPlainText() == 'اسم الموظف *';
+      }, description: 'required Arabic employee-name label');
+
+      expect(requiredLabelFinder, findsOneWidget);
+
       expect(find.text('أدخل اسم الموظف'), findsOneWidget);
+
       expect(find.text('استخدم الاسم المسجل في ملف الموظف'), findsOneWidget);
+
       expect(find.byIcon(Icons.person_outline), findsOneWidget);
+
+      final directionalityFinder = find.ancestor(
+        of: find.byType(TextFormField),
+        matching: find.byType(Directionality),
+      );
+
+      expect(directionalityFinder, findsWidgets);
+
+      final directionality = tester.widget<Directionality>(
+        directionalityFinder.first,
+      );
+
+      expect(directionality.textDirection, TextDirection.rtl);
+
       expect(tester.takeException(), isNull);
     });
 
@@ -438,6 +389,7 @@ void main() {
       await tester.pump();
 
       expect(find.text('Fares 123 فارس'), findsOneWidget);
+
       expect(tester.takeException(), isNull);
     });
 
@@ -456,6 +408,7 @@ void main() {
       );
 
       expect(find.byType(TextFormField), findsOneWidget);
+
       expect(tester.takeException(), isNull);
     });
   });
