@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:portal_app/app/theme/portal_icon_sizes.dart';
-import 'package:portal_app/app/theme/portal_theme.dart';
 import 'package:portal_app/core/widgets/feedback/portal_loading_state.dart';
 
 void main() {
