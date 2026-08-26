@@ -6,6 +6,7 @@ import 'core/widgets/buttons/portal_button.dart';
 import 'core/widgets/cards/portal_card.dart';
 import 'core/widgets/inputs/portal_text_field.dart';
 import 'core/widgets/status/portal_status_badge.dart';
+import 'core/widgets/feedback/portal_loading_state.dart';
 
 void main() {
   runApp(const PortalApp());
@@ -276,6 +277,27 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ),
+
+          const SizedBox(height: PortalSpacing.xl),
+
+          const _PreviewSection(
+            title: 'Loading states',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                PortalCard(child: PortalLoadingState(message: 'Loading employee information')),
+                SizedBox(height: PortalSpacing.md),
+                PortalCard(
+                  child: PortalLoadingState(
+                    message: 'Refreshing',
+                    layout: PortalLoadingStateLayout.inline,
+                    compact: true,
+                    padding: EdgeInsetsDirectional.zero,
+                  ),
+                ),
+              ],
             ),
           ),
 
