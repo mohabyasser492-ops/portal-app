@@ -11,6 +11,10 @@ builder.Services.AddHealthChecks();
 builder.Services.AddPortalApiSecurity(
     builder.Configuration);
 
+builder.Services.AddPortalGraph(
+    builder.Configuration);
+
+
 builder.Services.AddPortalRateLimiting();
 
 builder.Services.AddSingleton<PortalProblemDetailsCustomizer>();
