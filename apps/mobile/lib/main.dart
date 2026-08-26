@@ -10,6 +10,7 @@ import 'core/widgets/status/portal_status_badge.dart';
 import 'core/widgets/feedback/portal_loading_state.dart';
 import 'core/widgets/feedback/portal_empty_state.dart';
 import 'core/widgets/feedback/portal_error_state.dart';
+import 'core/widgets/feedback/portal_skeleton.dart';
 
 void main() {
   runApp(const PortalApp());
@@ -39,10 +40,7 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsetsDirectional.all(PortalSpacing.md),
         children: [
-          Text(
-            'Design system preview',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
+          Text('Design system preview', style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: PortalSpacing.sm),
           Text(
             'This temporary screen previews the reusable Portal App components.',
@@ -87,18 +85,9 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                   onPressed: () {},
                 ),
                 const SizedBox(height: PortalSpacing.sm),
-                PortalButton(
-                  label: 'Submitting',
-                  isLoading: true,
-                  expand: true,
-                  onPressed: () {},
-                ),
+                PortalButton(label: 'Submitting', isLoading: true, expand: true, onPressed: () {}),
                 const SizedBox(height: PortalSpacing.sm),
-                const PortalButton(
-                  label: 'Disabled action',
-                  expand: true,
-                  onPressed: null,
-                ),
+                const PortalButton(label: 'Disabled action', expand: true, onPressed: null),
               ],
             ),
           ),
@@ -127,11 +116,7 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                   trailingIcon: Icons.close,
                 ),
                 SizedBox(height: PortalSpacing.md),
-                PortalTextField(
-                  label: 'Password',
-                  obscureText: true,
-                  showPasswordToggle: true,
-                ),
+                PortalTextField(label: 'Password', obscureText: true, showPasswordToggle: true),
                 SizedBox(height: PortalSpacing.md),
                 PortalTextField(
                   label: 'Description',
@@ -141,11 +126,7 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                   maxLength: 500,
                 ),
                 SizedBox(height: PortalSpacing.md),
-                PortalTextField(
-                  label: 'Employee number',
-                  initialValue: '12345',
-                  readOnly: true,
-                ),
+                PortalTextField(label: 'Employee number', initialValue: '12345', readOnly: true),
                 SizedBox(height: PortalSpacing.md),
                 PortalTextField(
                   label: 'Disabled field',
@@ -176,9 +157,7 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                   title: 'Employee profile',
                   subtitle: 'Personal and employment information',
                   leading: Icon(Icons.person_outline),
-                  child: Text(
-                    'Review the information available in your employee profile.',
-                  ),
+                  child: Text('Review the information available in your employee profile.'),
                 ),
                 const SizedBox(height: PortalSpacing.md),
                 PortalCard(
@@ -197,9 +176,7 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                   subtitle: 'Synthetic preview content',
                   leading: Icon(Icons.campaign_outlined),
                   variant: PortalCardVariant.elevated,
-                  child: Text(
-                    'This card demonstrates the elevated visual style.',
-                  ),
+                  child: Text('This card demonstrates the elevated visual style.'),
                 ),
               ],
             ),
@@ -231,10 +208,7 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                   semanticLabel: 'Request status: rejected',
                   type: PortalStatusType.error,
                 ),
-                PortalStatusBadge(
-                  label: 'Information',
-                  type: PortalStatusType.information,
-                ),
+                PortalStatusBadge(label: 'Information', type: PortalStatusType.information),
                 PortalStatusBadge(
                   label: 'Draft',
                   semanticLabel: 'Request status: draft',
@@ -327,9 +301,7 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                     subtitle: 'المعلومات الشخصية والوظيفية',
                     leading: Icon(Icons.person_outline),
                     trailing: Icon(Icons.chevron_left),
-                    child: Text(
-                      'يمكنك مراجعة بيانات الموظف من خلال هذه البطاقة.',
-                    ),
+                    child: Text('يمكنك مراجعة بيانات الموظف من خلال هذه البطاقة.'),
                   ),
                   const SizedBox(height: PortalSpacing.md),
                   const Wrap(
@@ -372,11 +344,7 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                PortalCard(
-                  child: PortalLoadingState(
-                    message: 'Loading employee information',
-                  ),
-                ),
+                PortalCard(child: PortalLoadingState(message: 'Loading employee information')),
                 SizedBox(height: PortalSpacing.md),
                 PortalCard(
                   child: PortalLoadingState(
@@ -408,8 +376,7 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                 PortalCard(
                   child: PortalEmptyState(
                     title: 'No search results',
-                    description:
-                        'Try a different service name or clear the search.',
+                    description: 'Try a different service name or clear the search.',
                     icon: Icons.search_off_outlined,
                     actionLabel: 'Clear search',
                     onAction: () {},
@@ -438,13 +405,12 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                 PortalCard(
                   child: PortalErrorState(
                     title: 'Unable to load employee information',
-                    description:
-                        'Check your internet connection and try again.',
+                    description: 'Check your internet connection and try again.',
                     retryLabel: 'Try again',
                     onRetry: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Retry action selected')),
-                      );
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(const SnackBar(content: Text('Retry action selected')));
                     },
                   ),
                 ),
@@ -457,18 +423,14 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                     retryLabel: 'Try again',
                     onRetry: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Request submission retry selected'),
-                        ),
+                        const SnackBar(content: Text('Request submission retry selected')),
                       );
                     },
                     secondaryActionLabel: 'Return to drafts',
                     onSecondaryAction: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Return to drafts selected'),
-                        ),
-                      );
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(const SnackBar(content: Text('Return to drafts selected')));
                     },
                   ),
                 ),
@@ -480,11 +442,9 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                     icon: Icons.cloud_off_outlined,
                     secondaryActionLabel: 'Go back',
                     onSecondaryAction: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Go back action selected'),
-                        ),
-                      );
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(const SnackBar(content: Text('Go back action selected')));
                     },
                     compact: true,
                   ),
@@ -508,8 +468,7 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                       context: context,
                       dialog: PortalDialog(
                         title: 'Employee information',
-                        description:
-                            'The information shown in the preview is synthetic.',
+                        description: 'The information shown in the preview is synthetic.',
                         primaryActionLabel: 'Understood',
                         onPrimaryAction: () {
                           Navigator.of(context).pop();
@@ -529,8 +488,7 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                       barrierDismissible: false,
                       dialog: PortalDialog(
                         title: 'Submit request?',
-                        description:
-                            'Review the request information before submitting.',
+                        description: 'Review the request information before submitting.',
                         type: PortalDialogType.confirmation,
                         primaryActionLabel: 'Submit',
                         onPrimaryAction: () {
@@ -568,6 +526,65 @@ class PortalDesignSystemPreviewPage extends StatelessWidget {
                       ),
                     );
                   },
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: PortalSpacing.xl),
+
+          const _PreviewSection(
+            title: 'Skeleton loading',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                PortalCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          PortalSkeleton(width: 56, height: 56, shape: PortalSkeletonShape.circle),
+                          SizedBox(width: PortalSpacing.md),
+                          Expanded(
+                            child: PortalTextSkeleton(
+                              width: 220,
+                              lines: 2,
+                              lastLineWidthFactor: 0.55,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: PortalSpacing.lg),
+                      PortalTextSkeleton(width: 320, lines: 4),
+                    ],
+                  ),
+                ),
+                SizedBox(height: PortalSpacing.md),
+                PortalCard(
+                  child: Column(
+                    children: [
+                      PortalListTileSkeleton(),
+                      SizedBox(height: PortalSpacing.md),
+                      PortalListTileSkeleton(showTrailing: true),
+                      SizedBox(height: PortalSpacing.md),
+                      PortalListTileSkeleton(showLeading: false),
+                    ],
+                  ),
+                ),
+                SizedBox(height: PortalSpacing.md),
+                PortalCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PortalSkeleton(width: 180, height: 20, animate: false),
+                      SizedBox(height: PortalSpacing.md),
+                      SizedBox(
+                        width: double.infinity,
+                        child: PortalSkeleton(width: 320, height: 120, animate: false),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
