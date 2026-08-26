@@ -31,7 +31,9 @@ public static class ApiSecurityExtensions
             .AddMicrosoftIdentityWebApi(
                 entraSection,
                 jwtBearerScheme:
-                    JwtBearerDefaults.AuthenticationScheme);
+                    JwtBearerDefaults.AuthenticationScheme)
+            .EnableTokenAcquisitionToCallDownstreamApi()
+            .AddInMemoryTokenCaches();
 
         var requiredScope =
             entraSection[nameof(EntraOptions.RequiredScope)] ??
