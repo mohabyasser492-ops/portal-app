@@ -6,26 +6,20 @@ import '../../../app/theme/portal_spacing.dart';
 import '../buttons/portal_button.dart';
 
 /// Visual intent represented by [PortalDialog].
-enum PortalDialogType {
-  information,
-  confirmation,
-  warning,
-  destructive,
-  success,
-}
+enum PortalDialogType { information, confirmation, warning, destructive, success }
 
 /// A reusable dialog for Portal App.
 ///
 /// The dialog supports:
 ///
 /// - Information, confirmation, warning, destructive, and success states
-/// - Optional icon, title, and description
-/// - Optional custom body content
-/// - Primary and secondary actions
-/// - Accessible semantics
-/// - Arabic RTL through directional layout
-/// - Long content through scrolling
-/// - Long action labels through wrapping
+/// - Optional description and custom content
+/// - Optional primary and secondary actions
+/// - Optional close button
+/// - Accessible route semantics
+/// - Arabic RTL through directional layouts
+/// - Scrollable content
+/// - Action wrapping on narrow screens
 class PortalDialog extends StatelessWidget {
   const PortalDialog({
     required this.title,
@@ -56,28 +50,28 @@ class PortalDialog extends StatelessWidget {
   /// Localized title displayed at the top of the dialog.
   final String title;
 
-  /// Optional localized description.
+  /// Optional localized explanation.
   final String? description;
 
   /// Optional custom content displayed after the description.
   final Widget? content;
 
-  /// Semantic type controlling the default icon and icon color.
+  /// Semantic type controlling the default icon and its color.
   final PortalDialogType type;
 
-  /// Optional icon overriding the default icon for [type].
+  /// Optional icon overriding the icon associated with [type].
   final IconData? icon;
 
   /// Optional localized label for the primary action.
   final String? primaryActionLabel;
 
-  /// Callback invoked by the primary action.
+  /// Callback invoked when the primary action is selected.
   final VoidCallback? onPrimaryAction;
 
   /// Optional localized label for the secondary action.
   final String? secondaryActionLabel;
 
-  /// Callback invoked by the secondary action.
+  /// Callback invoked when the secondary action is selected.
   final VoidCallback? onSecondaryAction;
 
   /// Optional custom screen-reader description.
@@ -85,7 +79,7 @@ class PortalDialog extends StatelessWidget {
   /// When omitted, [title] and [description] are combined.
   final String? semanticLabel;
 
-  /// Whether a close button should be shown.
+  /// Whether the close button is displayed.
   final bool dismissible;
 
   bool get _hasDescription {
@@ -158,10 +152,11 @@ class PortalDialog extends StatelessWidget {
       container: true,
       scopesRoute: true,
       namesRoute: true,
+      explicitChildNodes: true,
       label: _accessibleLabel,
       child: Dialog(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 520),
+          constraints: const BoxConstraints(maxWidth: 520, maxHeight: 640),
           child: Padding(
             padding: const EdgeInsetsDirectional.all(PortalSpacing.lg),
             child: Column(
@@ -170,9 +165,7 @@ class PortalDialog extends StatelessWidget {
                 _buildHeader(context),
                 if (_hasDescription || content != null) ...[
                   const SizedBox(height: PortalSpacing.md),
-                  Flexible(
-                    child: SingleChildScrollView(child: _buildContent(context)),
-                  ),
+                  Flexible(child: SingleChildScrollView(child: _buildContent(context))),
                 ],
                 if (_hasPrimaryAction || _hasSecondaryAction) ...[
                   const SizedBox(height: PortalSpacing.lg),
@@ -191,22 +184,16 @@ class PortalDialog extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ExcludeSemantics(
-          child: Icon(
-            _resolvedIcon,
-            size: PortalIconSizes.xl,
-            color: _iconColor,
-          ),
+          child: Icon(_resolvedIcon, size: PortalIconSizes.xl, color: _iconColor),
         ),
         const SizedBox(width: PortalSpacing.sm),
-        Expanded(
-          child: Text(title, style: Theme.of(context).textTheme.titleLarge),
-        ),
+        Expanded(child: Text(title, style: Theme.of(context).textTheme.titleLarge)),
         if (dismissible) ...[
           const SizedBox(width: PortalSpacing.sm),
           IconButton(
             tooltip: 'Close',
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(context).maybePop();
             },
             icon: const Icon(Icons.close, size: PortalIconSizes.lg),
           ),
@@ -226,9 +213,8 @@ class PortalDialog extends StatelessWidget {
               context,
             ).textTheme.bodyMedium?.copyWith(color: PortalColors.textSecondary),
           ),
-        if (_hasDescription && content != null)
-          const SizedBox(height: PortalSpacing.md),
-        ?content,
+        if (_hasDescription && content != null) const SizedBox(height: PortalSpacing.md),
+        if (content != null) content!,
       ],
     );
   }
