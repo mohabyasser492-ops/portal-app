@@ -9,7 +9,10 @@ public sealed class PayrollPeriodTests
     [InlineData("2026-08", 2026, 8)]
     [InlineData("2026_08", 2026, 8)]
     [InlineData("2026 08", 2026, 8)]
-    public void ParsesSupportedFormats(
+    [InlineData("1970-08", 1970, 8)]
+    [InlineData("1965-12", 1965, 12)]
+    [InlineData("2300-01", 2300, 1)]
+    public void ParsesSupportedPeriods(
         string source,
         int expectedYear,
         int expectedMonth)
@@ -28,6 +31,7 @@ public sealed class PayrollPeriodTests
 
     [Theory]
     [InlineData("")]
+    [InlineData("202608")]
     [InlineData("2026-00")]
     [InlineData("2026-13")]
     [InlineData("August 2026")]
@@ -51,5 +55,30 @@ public sealed class PayrollPeriodTests
         Assert.Equal(
             "2026-08",
             period.Value);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void ConstructorRejectsNonPositiveYear(
+        int year)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => new PayrollPeriod(
+                year,
+                8));
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(13)]
+    [InlineData(-1)]
+    public void ConstructorRejectsInvalidMonth(
+        int month)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => new PayrollPeriod(
+                2026,
+                month));
     }
 }

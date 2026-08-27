@@ -47,6 +47,46 @@ public sealed class PayrollDocumentMapperTests
     }
 
     [Fact]
+    public void MapsHistoricalPayrollPeriod()
+    {
+        var item = CreateItem(
+            name: "Payslip_1970-08.pdf",
+            mimeType: "application/pdf",
+            size: 2048);
+
+        var result =
+            _mapper.Map(item);
+
+        Assert.Equal(
+            1970,
+            result.Period.Year);
+
+        Assert.Equal(
+            8,
+            result.Period.Month);
+    }
+
+    [Fact]
+    public void MapsFuturePayrollPeriodWithoutArbitraryLimit()
+    {
+        var item = CreateItem(
+            name: "Payslip_2300-01.pdf",
+            mimeType: "application/pdf",
+            size: 2048);
+
+        var result =
+            _mapper.Map(item);
+
+        Assert.Equal(
+            2300,
+            result.Period.Year);
+
+        Assert.Equal(
+            1,
+            result.Period.Month);
+    }
+
+    [Fact]
     public void NormalizesMimeTypeAndHash()
     {
         var item = CreateItem(
@@ -192,7 +232,6 @@ public sealed class PayrollDocumentMapperTests
     [Theory]
     [InlineData("Payslip_2026-00.pdf")]
     [InlineData("Payslip_2026-13.pdf")]
-    [InlineData("Payslip_1999-08.pdf")]
     [InlineData("Payslip_202608.pdf")]
     public void RejectsInvalidPayrollPeriods(
         string fileName)

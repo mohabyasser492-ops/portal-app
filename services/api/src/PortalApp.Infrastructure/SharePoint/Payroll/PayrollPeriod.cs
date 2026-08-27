@@ -2,13 +2,33 @@ using System.Globalization;
 
 namespace PortalApp.Infrastructure.SharePoint.Payroll;
 
-public sealed record PayrollPeriod(
-    int Year,
-    int Month)
+public sealed record PayrollPeriod
 {
-    public const int MinimumYear = 2000;
+    public PayrollPeriod(
+        int year,
+        int month)
+    {
+        if (year < 1)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(year),
+                "The payroll year must be positive.");
+        }
 
-    public const int MaximumYear = 2200;
+        if (month is < 1 or > 12)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(month),
+                "The payroll month must be between 1 and 12.");
+        }
+
+        Year = year;
+        Month = month;
+    }
+
+    public int Year { get; }
+
+    public int Month { get; }
 
     public string Value =>
         string.Create(
@@ -21,7 +41,7 @@ public sealed record PayrollPeriod(
         if (!TryParse(value, out var period))
         {
             throw new FormatException(
-                "The payroll period must contain a year between 2000 and 2200 and a valid month.");
+                "The payroll period must use YYYY-MM, YYYY_MM, or YYYY MM and contain a valid calendar month.");
         }
 
         return period;
@@ -51,12 +71,6 @@ public sealed record PayrollPeriod(
                 CultureInfo.InvariantCulture,
                 DateTimeStyles.None,
                 out var date))
-        {
-            return false;
-        }
-
-        if (date.Year < MinimumYear ||
-            date.Year > MaximumYear)
         {
             return false;
         }
