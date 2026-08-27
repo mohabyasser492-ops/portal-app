@@ -54,7 +54,8 @@ class PortalSkeleton extends StatefulWidget {
   State<PortalSkeleton> createState() => _PortalSkeletonState();
 }
 
-class _PortalSkeletonState extends State<PortalSkeleton> with SingleTickerProviderStateMixin {
+class _PortalSkeletonState extends State<PortalSkeleton>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
   late final Animation<double> _animation;
 
@@ -67,7 +68,10 @@ class _PortalSkeletonState extends State<PortalSkeleton> with SingleTickerProvid
       vsync: this,
     );
 
-    _animation = CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
 
     if (widget.animate) {
       _animationController.repeat(reverse: true);
@@ -108,7 +112,9 @@ class _PortalSkeletonState extends State<PortalSkeleton> with SingleTickerProvid
                 animation: _animation,
                 builder: (context, child) {
                   return DecoratedBox(
-                    decoration: _buildDecoration(animationValue: _animation.value),
+                    decoration: _buildDecoration(
+                      animationValue: _animation.value,
+                    ),
                   );
                 },
               )
@@ -124,7 +130,11 @@ class _PortalSkeletonState extends State<PortalSkeleton> with SingleTickerProvid
       animationValue,
     )!;
 
-    return BoxDecoration(color: color, shape: _boxShape, borderRadius: _resolvedBorderRadius);
+    return BoxDecoration(
+      color: color,
+      shape: _boxShape,
+      borderRadius: _resolvedBorderRadius,
+    );
   }
 
   BoxShape get _boxShape {
@@ -197,7 +207,9 @@ class PortalTextSkeleton extends StatelessWidget {
         final currentWidth = isLastLine ? width * lastLineWidthFactor : width;
 
         return Padding(
-          padding: EdgeInsetsDirectional.only(bottom: isLastLine ? 0 : lineSpacing),
+          padding: EdgeInsetsDirectional.only(
+            bottom: isLastLine ? 0 : lineSpacing,
+          ),
           child: PortalSkeleton(
             width: currentWidth,
             height: lineHeight,
