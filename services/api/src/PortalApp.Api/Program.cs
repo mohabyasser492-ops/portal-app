@@ -1,4 +1,4 @@
-﻿using PortalApp.Api.Configuration;
+using PortalApp.Api.Configuration;
 using PortalApp.Api.Errors;
 using PortalApp.Api.Middleware;
 
@@ -12,6 +12,9 @@ builder.Services.AddPortalApiSecurity(
     builder.Configuration);
 
 builder.Services.AddPortalGraph(
+    builder.Configuration);
+
+builder.Services.AddPortalSharePoint(
     builder.Configuration);
 
 
