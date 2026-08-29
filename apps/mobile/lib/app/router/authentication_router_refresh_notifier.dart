@@ -2,24 +2,19 @@ import 'package:flutter/foundation.dart';
 
 import '../../features/authentication/application/authentication_state.dart';
 
-/// Notifies GoRouter when the Portal App authentication state changes.
-///
-/// GoRouter uses this object through its `refreshListenable` parameter.
-/// Authentication state changes therefore cause the router to reevaluate its
-/// current route configuration.
+/// Notifies GoRouter when authentication state changes.
 final class AuthenticationRouterRefreshNotifier extends ChangeNotifier {
-  AuthenticationRouterRefreshNotifier({
-    required AuthenticationState initialState,
-  }) : _authenticationState = initialState;
+  AuthenticationRouterRefreshNotifier({required AuthenticationState initialState})
+    : _authenticationState = initialState;
 
   AuthenticationState _authenticationState;
 
-  /// Current authentication state observed by the router.
+  /// Current authentication state observed by GoRouter.
   AuthenticationState get authenticationState {
     return _authenticationState;
   }
 
-  /// Updates the observed state and notifies GoRouter when it changes.
+  /// Updates the state and triggers router redirect evaluation.
   void update(AuthenticationState nextState) {
     if (_authenticationState == nextState) {
       return;

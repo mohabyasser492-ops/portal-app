@@ -3,19 +3,29 @@ import 'package:flutter/material.dart';
 import '../../../app/theme/portal_design_system.dart';
 import '../../../core/widgets/feedback/portal_loading_state.dart';
 
-/// Screen displayed while the application restores an existing session.
+/// Public loading route displayed during authentication transitions.
 class AuthenticationLoadingPage extends StatelessWidget {
-  const AuthenticationLoadingPage({super.key});
+  const AuthenticationLoadingPage({
+    this.message = 'Checking your session',
+    this.semanticLabel = 'Checking for an existing authentication session',
+    super.key,
+  });
+
+  /// User-facing loading message.
+  final String message;
+
+  /// Accessible loading announcement.
+  final String semanticLabel;
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: SafeArea(
         child: Center(
           child: PortalLoadingState(
-            message: 'Checking your session',
-            semanticLabel: 'Checking your authentication session',
-            padding: EdgeInsetsDirectional.all(PortalSpacing.lg),
+            message: message,
+            semanticLabel: semanticLabel,
+            padding: const EdgeInsetsDirectional.all(PortalSpacing.lg),
           ),
         ),
       ),

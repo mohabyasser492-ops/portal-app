@@ -1,7 +1,3 @@
-/// Defines stable names for Portal App routes.
-///
-/// Widgets should navigate using these names instead of repeating string
-/// literals throughout the application.
 final class PortalRouteNames {
   const PortalRouteNames._();
 
@@ -10,5 +6,9 @@ final class PortalRouteNames {
   static const String requests = 'requests';
   static const String profile = 'profile';
   static const String designSystem = 'design-system';
+
+  static const String signIn = 'sign-in';
+  static const String authenticationLoading = 'authentication-loading';
+
   static const String notFound = 'not-found';
 }

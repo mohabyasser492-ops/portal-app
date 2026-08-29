@@ -15,6 +15,8 @@ import 'package:portal_app/features/not_found/presentation/not_found_page.dart';
 import 'package:portal_app/features/profile/presentation/profile_placeholder_page.dart';
 import 'package:portal_app/features/requests/presentation/requests_placeholder_page.dart';
 import 'package:portal_app/features/services/presentation/services_placeholder_page.dart';
+import 'package:portal_app/app/router/authentication_router_refresh_notifier.dart';
+import 'package:portal_app/features/authentication/application/authentication_state.dart';
 
 class DesignSystemPreviewPage extends StatelessWidget {
   const DesignSystemPreviewPage({super.key});
@@ -26,9 +28,18 @@ class DesignSystemPreviewPage extends StatelessWidget {
 }
 
 void main() {
+  const authenticatedUser = PortalUser(
+    id: 'test-user',
+    displayName: 'Test Employee',
+    email: 'test@example.invalid',
+  );
   group('PortalApp', () {
     testWidgets('uses the Portal application theme', (tester) async {
-      final router = createPortalRouter();
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(refreshNotifier: refreshNotifier);
       final repository = _SignedInAuthenticationRepository();
 
       await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
@@ -45,7 +56,11 @@ void main() {
     });
 
     testWidgets('starts on the Home destination', (tester) async {
-      final router = createPortalRouter();
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(refreshNotifier: refreshNotifier);
       final repository = _SignedInAuthenticationRepository();
 
       await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
@@ -61,7 +76,11 @@ void main() {
     });
 
     testWidgets('navigates between primary destinations', (tester) async {
-      final router = createPortalRouter();
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(refreshNotifier: refreshNotifier);
       final repository = _SignedInAuthenticationRepository();
 
       await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
@@ -93,7 +112,11 @@ void main() {
     });
 
     testWidgets('opens the design-system preview', (tester) async {
-      final router = createPortalRouter();
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(refreshNotifier: refreshNotifier);
       final repository = _SignedInAuthenticationRepository();
 
       await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
@@ -111,7 +134,14 @@ void main() {
     });
 
     testWidgets('returns to the active branch from the preview', (tester) async {
-      final router = createPortalRouter(initialLocation: PortalRoutePaths.services);
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(
+        initialLocation: PortalRoutePaths.services,
+        refreshNotifier: refreshNotifier,
+      );
       final repository = _SignedInAuthenticationRepository();
 
       await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
@@ -136,7 +166,14 @@ void main() {
     });
 
     testWidgets('shows a safe fallback for an unknown route', (tester) async {
-      final router = createPortalRouter(initialLocation: '/unknown-route');
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(
+        initialLocation: '/unknown-route',
+        refreshNotifier: refreshNotifier,
+      );
       final repository = _SignedInAuthenticationRepository();
 
       await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
@@ -152,7 +189,14 @@ void main() {
     });
 
     testWidgets('returns home from the unknown-route page', (tester) async {
-      final router = createPortalRouter(initialLocation: '/unknown-route');
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(
+        initialLocation: '/unknown-route',
+        refreshNotifier: refreshNotifier,
+      );
       final repository = _SignedInAuthenticationRepository();
 
       await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
@@ -172,7 +216,11 @@ void main() {
     });
 
     testWidgets('uses bottom navigation on a compact screen', (tester) async {
-      final router = createPortalRouter();
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(refreshNotifier: refreshNotifier);
       final repository = _SignedInAuthenticationRepository();
 
       await _setTestViewport(tester, const Size(390, 844));
@@ -189,7 +237,11 @@ void main() {
     });
 
     testWidgets('uses a navigation rail on a wide screen', (tester) async {
-      final router = createPortalRouter();
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(refreshNotifier: refreshNotifier);
       final repository = _SignedInAuthenticationRepository();
 
       await _setTestViewport(tester, const Size(1024, 768));

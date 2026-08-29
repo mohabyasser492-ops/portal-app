@@ -12,11 +12,23 @@ import 'package:portal_app/features/profile/presentation/profile_placeholder_pag
 import 'package:portal_app/features/requests/presentation/requests_placeholder_page.dart';
 import 'package:portal_app/features/services/presentation/services_placeholder_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portal_app/app/router/authentication_router_refresh_notifier.dart';
+import 'package:portal_app/features/authentication/application/authentication_state.dart';
+import 'package:portal_app/features/authentication/domain/portal_user.dart';
 
 void main() {
+  const authenticatedUser = PortalUser(
+    id: 'test-user',
+    displayName: 'Test Employee',
+    email: 'test@example.invalid',
+  );
   group('PortalRouter', () {
     testWidgets('starts on the Home route', (tester) async {
-      final router = createPortalRouter();
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(refreshNotifier: refreshNotifier);
 
       await tester.pumpWidget(_buildTestApp(router));
 
@@ -32,7 +44,14 @@ void main() {
     });
 
     testWidgets('starts at a supplied initial location', (tester) async {
-      final router = createPortalRouter(initialLocation: PortalRoutePaths.services);
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(
+        initialLocation: PortalRoutePaths.services,
+        refreshNotifier: refreshNotifier,
+      );
 
       await tester.pumpWidget(_buildTestApp(router));
 
@@ -46,7 +65,14 @@ void main() {
     });
 
     testWidgets('navigates to Services from the navigation bar', (tester) async {
-      final router = createPortalRouter();
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(
+        initialLocation: PortalRoutePaths.services,
+        refreshNotifier: refreshNotifier,
+      );
 
       await tester.pumpWidget(_buildTestApp(router));
 
@@ -64,7 +90,14 @@ void main() {
     });
 
     testWidgets('navigates to Requests from the navigation bar', (tester) async {
-      final router = createPortalRouter();
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(
+        initialLocation: PortalRoutePaths.services,
+        refreshNotifier: refreshNotifier,
+      );
 
       await tester.pumpWidget(_buildTestApp(router));
 
@@ -82,7 +115,14 @@ void main() {
     });
 
     testWidgets('navigates to Profile from the navigation bar', (tester) async {
-      final router = createPortalRouter();
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(
+        initialLocation: PortalRoutePaths.services,
+        refreshNotifier: refreshNotifier,
+      );
 
       await tester.pumpWidget(_buildTestApp(router));
 
@@ -100,7 +140,14 @@ void main() {
     });
 
     testWidgets('supports navigation by route name', (tester) async {
-      final router = createPortalRouter();
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(
+        initialLocation: PortalRoutePaths.services,
+        refreshNotifier: refreshNotifier,
+      );
 
       await tester.pumpWidget(_buildTestApp(router));
 
@@ -118,7 +165,14 @@ void main() {
     });
 
     testWidgets('shows the not-found page for an unknown route', (tester) async {
-      final router = createPortalRouter(initialLocation: '/unknown-page');
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(
+        initialLocation: '/unknown-route',
+        refreshNotifier: refreshNotifier,
+      );
 
       await tester.pumpWidget(_buildTestApp(router));
 
@@ -134,7 +188,14 @@ void main() {
     });
 
     testWidgets('returns home from the not-found page', (tester) async {
-      final router = createPortalRouter(initialLocation: '/unknown-page');
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(
+        initialLocation: '/unknown-route',
+        refreshNotifier: refreshNotifier,
+      );
 
       await tester.pumpWidget(_buildTestApp(router));
 
@@ -150,7 +211,12 @@ void main() {
 
       expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.home);
 
+      await tester.pumpWidget(const SizedBox.shrink());
+
+      await tester.pump();
+
       router.dispose();
+      refreshNotifier.dispose();
     });
   });
 }
