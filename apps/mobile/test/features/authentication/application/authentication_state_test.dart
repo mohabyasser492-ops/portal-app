@@ -117,9 +117,15 @@ void main() {
     });
 
     test('detects different signed-in users', () {
-      const firstUser = PortalUser(id: 'first-user-id', displayName: 'First Employee');
+      const firstUser = PortalUser(
+        id: 'first-user-id',
+        displayName: 'First Employee',
+      );
 
-      const secondUser = PortalUser(id: 'second-user-id', displayName: 'Second Employee');
+      const secondUser = PortalUser(
+        id: 'second-user-id',
+        displayName: 'Second Employee',
+      );
 
       const firstState = AuthenticationState.signedIn(firstUser);
 
@@ -129,9 +135,13 @@ void main() {
     });
 
     test('detects different failure messages', () {
-      const first = AuthenticationState.failure('First authentication failure.');
+      const first = AuthenticationState.failure(
+        'First authentication failure.',
+      );
 
-      const second = AuthenticationState.failure('Second authentication failure.');
+      const second = AuthenticationState.failure(
+        'Second authentication failure.',
+      );
 
       expect(first, isNot(second));
     });

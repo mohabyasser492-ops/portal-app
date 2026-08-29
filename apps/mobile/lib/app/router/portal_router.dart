@@ -25,19 +25,31 @@ GoRouter createPortalRouter({
   required AuthenticationRouterRefreshNotifier refreshNotifier,
   AuthenticationRedirectStore? redirectStore,
 }) {
-  final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'portal-root-navigator');
+  final rootNavigatorKey = GlobalKey<NavigatorState>(
+    debugLabel: 'portal-root-navigator',
+  );
 
-  final homeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'portal-home-navigator');
+  final homeNavigatorKey = GlobalKey<NavigatorState>(
+    debugLabel: 'portal-home-navigator',
+  );
 
-  final servicesNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'portal-services-navigator');
+  final servicesNavigatorKey = GlobalKey<NavigatorState>(
+    debugLabel: 'portal-services-navigator',
+  );
 
-  final requestsNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'portal-requests-navigator');
+  final requestsNavigatorKey = GlobalKey<NavigatorState>(
+    debugLabel: 'portal-requests-navigator',
+  );
 
-  final profileNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'portal-profile-navigator');
+  final profileNavigatorKey = GlobalKey<NavigatorState>(
+    debugLabel: 'portal-profile-navigator',
+  );
 
   final effectiveRedirectStore = redirectStore ?? AuthenticationRedirectStore();
 
-  final redirectGuard = AuthenticationRedirectGuard(redirectStore: effectiveRedirectStore);
+  final redirectGuard = AuthenticationRedirectGuard(
+    redirectStore: effectiveRedirectStore,
+  );
 
   return GoRouter(
     navigatorKey: rootNavigatorKey,

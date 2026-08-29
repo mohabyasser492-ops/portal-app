@@ -36,7 +36,9 @@ void main() {
 
       addTearDown(container.dispose);
 
-      final controller = container.read(authenticationControllerProvider.notifier);
+      final controller = container.read(
+        authenticationControllerProvider.notifier,
+      );
 
       await controller.initialize();
 
@@ -48,13 +50,17 @@ void main() {
     });
 
     test('restores an authenticated session', () async {
-      final repository = FakeAuthenticationRepository(restoredUser: authenticatedUser);
+      final repository = FakeAuthenticationRepository(
+        restoredUser: authenticatedUser,
+      );
 
       final container = _createContainer(repository);
 
       addTearDown(container.dispose);
 
-      final controller = container.read(authenticationControllerProvider.notifier);
+      final controller = container.read(
+        authenticationControllerProvider.notifier,
+      );
 
       await controller.initialize();
 
@@ -76,7 +82,9 @@ void main() {
 
       addTearDown(container.dispose);
 
-      final controller = container.read(authenticationControllerProvider.notifier);
+      final controller = container.read(
+        authenticationControllerProvider.notifier,
+      );
 
       await controller.initialize();
 
@@ -84,7 +92,10 @@ void main() {
 
       expect(state.status, AuthenticationStatus.failure);
 
-      expect(state.errorMessage, 'Unable to restore the authentication session.');
+      expect(
+        state.errorMessage,
+        'Unable to restore the authentication session.',
+      );
 
       expect(state.hasFailure, isTrue);
 
@@ -98,7 +109,9 @@ void main() {
 
       addTearDown(container.dispose);
 
-      final controller = container.read(authenticationControllerProvider.notifier);
+      final controller = container.read(
+        authenticationControllerProvider.notifier,
+      );
 
       await controller.initialize();
       await controller.initialize();
@@ -112,13 +125,17 @@ void main() {
     });
 
     test('signs in successfully', () async {
-      final repository = FakeAuthenticationRepository(signedInUser: authenticatedUser);
+      final repository = FakeAuthenticationRepository(
+        signedInUser: authenticatedUser,
+      );
 
       final container = _createContainer(repository);
 
       addTearDown(container.dispose);
 
-      final controller = container.read(authenticationControllerProvider.notifier);
+      final controller = container.read(
+        authenticationControllerProvider.notifier,
+      );
 
       await controller.signIn();
 
@@ -140,7 +157,9 @@ void main() {
 
       addTearDown(container.dispose);
 
-      final controller = container.read(authenticationControllerProvider.notifier);
+      final controller = container.read(
+        authenticationControllerProvider.notifier,
+      );
 
       await controller.signIn();
 
@@ -154,17 +173,24 @@ void main() {
     });
 
     test('signs out an authenticated user', () async {
-      final repository = FakeAuthenticationRepository(signedInUser: authenticatedUser);
+      final repository = FakeAuthenticationRepository(
+        signedInUser: authenticatedUser,
+      );
 
       final container = _createContainer(repository);
 
       addTearDown(container.dispose);
 
-      final controller = container.read(authenticationControllerProvider.notifier);
+      final controller = container.read(
+        authenticationControllerProvider.notifier,
+      );
 
       await controller.signIn();
 
-      expect(container.read(authenticationControllerProvider).isAuthenticated, isTrue);
+      expect(
+        container.read(authenticationControllerProvider).isAuthenticated,
+        isTrue,
+      );
 
       await controller.signOut();
 
@@ -183,7 +209,9 @@ void main() {
 
       addTearDown(container.dispose);
 
-      final controller = container.read(authenticationControllerProvider.notifier);
+      final controller = container.read(
+        authenticationControllerProvider.notifier,
+      );
 
       await controller.signOut();
 
@@ -205,7 +233,9 @@ void main() {
 
       addTearDown(container.dispose);
 
-      final controller = container.read(authenticationControllerProvider.notifier);
+      final controller = container.read(
+        authenticationControllerProvider.notifier,
+      );
 
       await controller.signIn();
       await controller.signOut();
@@ -228,11 +258,16 @@ void main() {
 
       addTearDown(container.dispose);
 
-      final controller = container.read(authenticationControllerProvider.notifier);
+      final controller = container.read(
+        authenticationControllerProvider.notifier,
+      );
 
       await controller.signIn();
 
-      expect(container.read(authenticationControllerProvider).hasFailure, isTrue);
+      expect(
+        container.read(authenticationControllerProvider).hasFailure,
+        isTrue,
+      );
 
       controller.clearFailure();
 
@@ -249,7 +284,9 @@ void main() {
 
       addTearDown(container.dispose);
 
-      final controller = container.read(authenticationControllerProvider.notifier);
+      final controller = container.read(
+        authenticationControllerProvider.notifier,
+      );
 
       controller.clearFailure();
 

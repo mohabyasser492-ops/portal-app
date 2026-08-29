@@ -58,7 +58,7 @@ void main() {
 
       expect(find.byType(SignedOutPage), findsOneWidget);
 
-      expect(find.text('Sign in'), findsOneWidget);
+      expect(find.text('Sign in with Microsoft'), findsOneWidget);
 
       expect(tester.takeException(), isNull);
     });
@@ -76,17 +76,32 @@ void main() {
           .read(authenticationControllerProvider.notifier)
           .initialize();
 
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump();
 
-      await tester.tap(find.text('Sign in'));
+      expect(find.byType(SignedOutPage), findsOneWidget);
 
-      await tester.pumpAndSettle();
+      await tester.tap(find.text('Sign in with Microsoft'));
+
+      await tester.pump();
+      await tester.pump();
 
       expect(repository.signInCallCount, 1);
+
+      expect(
+        container.read(authenticationControllerProvider).isAuthenticated,
+        isTrue,
+      );
+
+      expect(find.byType(AuthenticationLoadingPage), findsOneWidget);
 
       expect(find.text('Opening Portal App'), findsOneWidget);
 
       expect(tester.takeException(), isNull);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+
+      await tester.pump();
     });
 
     testWidgets('displays and clears a sign-in failure', (tester) async {
@@ -107,7 +122,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Sign in'));
+      await tester.tap(find.text('Sign in with Microsoft'));
 
       await tester.pumpAndSettle();
 

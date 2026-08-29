@@ -42,13 +42,18 @@ void main() {
       final router = createPortalRouter(refreshNotifier: refreshNotifier);
       final repository = _SignedInAuthenticationRepository();
 
-      await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
+      await tester.pumpWidget(
+        _buildTestApp(router: router, repository: repository),
+      );
 
       await tester.pumpAndSettle();
 
       final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
 
-      expect(materialApp.theme?.colorScheme.primary, PortalColors.actionPrimary);
+      expect(
+        materialApp.theme?.colorScheme.primary,
+        PortalColors.actionPrimary,
+      );
       expect(materialApp.debugShowCheckedModeBanner, isFalse);
       expect(tester.takeException(), isNull);
 
@@ -63,13 +68,18 @@ void main() {
       final router = createPortalRouter(refreshNotifier: refreshNotifier);
       final repository = _SignedInAuthenticationRepository();
 
-      await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
+      await tester.pumpWidget(
+        _buildTestApp(router: router, repository: repository),
+      );
 
       await tester.pumpAndSettle();
 
       expect(find.byType(HomePlaceholderPage), findsOneWidget);
       expect(find.byType(PortalNavigationShell), findsOneWidget);
-      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.home);
+      expect(
+        router.routeInformationProvider.value.uri.path,
+        PortalRoutePaths.home,
+      );
       expect(tester.takeException(), isNull);
 
       await _disposeRouter(tester, router);
@@ -83,29 +93,43 @@ void main() {
       final router = createPortalRouter(refreshNotifier: refreshNotifier);
       final repository = _SignedInAuthenticationRepository();
 
-      await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
+      await tester.pumpWidget(
+        _buildTestApp(router: router, repository: repository),
+      );
 
       await tester.pumpAndSettle();
 
       await _tapCompactDestination(tester, 'Services');
 
       expect(find.byType(ServicesPlaceholderPage), findsOneWidget);
-      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.services);
+      expect(
+        router.routeInformationProvider.value.uri.path,
+        PortalRoutePaths.services,
+      );
 
       await _tapCompactDestination(tester, 'Requests');
 
       expect(find.byType(RequestsPlaceholderPage), findsOneWidget);
-      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.requests);
+      expect(
+        router.routeInformationProvider.value.uri.path,
+        PortalRoutePaths.requests,
+      );
 
       await _tapCompactDestination(tester, 'Profile');
 
       expect(find.byType(ProfilePlaceholderPage), findsOneWidget);
-      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.profile);
+      expect(
+        router.routeInformationProvider.value.uri.path,
+        PortalRoutePaths.profile,
+      );
 
       await _tapCompactDestination(tester, 'Home');
 
       expect(find.byType(HomePlaceholderPage), findsOneWidget);
-      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.home);
+      expect(
+        router.routeInformationProvider.value.uri.path,
+        PortalRoutePaths.home,
+      );
       expect(tester.takeException(), isNull);
 
       await _disposeRouter(tester, router);
@@ -119,7 +143,9 @@ void main() {
       final router = createPortalRouter(refreshNotifier: refreshNotifier);
       final repository = _SignedInAuthenticationRepository();
 
-      await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
+      await tester.pumpWidget(
+        _buildTestApp(router: router, repository: repository),
+      );
 
       await tester.pumpAndSettle();
 
@@ -127,13 +153,18 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(DesignSystemPreviewPage), findsOneWidget);
-      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.designSystem);
+      expect(
+        router.routeInformationProvider.value.uri.path,
+        PortalRoutePaths.designSystem,
+      );
       expect(tester.takeException(), isNull);
 
       await _disposeRouter(tester, router);
     });
 
-    testWidgets('returns to the active branch from the preview', (tester) async {
+    testWidgets('returns to the active branch from the preview', (
+      tester,
+    ) async {
       final refreshNotifier = AuthenticationRouterRefreshNotifier(
         initialState: const AuthenticationState.signedIn(authenticatedUser),
       );
@@ -144,7 +175,9 @@ void main() {
       );
       final repository = _SignedInAuthenticationRepository();
 
-      await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
+      await tester.pumpWidget(
+        _buildTestApp(router: router, repository: repository),
+      );
 
       await tester.pumpAndSettle();
 
@@ -159,7 +192,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(ServicesPlaceholderPage), findsOneWidget);
-      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.services);
+      expect(
+        router.routeInformationProvider.value.uri.path,
+        PortalRoutePaths.services,
+      );
       expect(tester.takeException(), isNull);
 
       await _disposeRouter(tester, router);
@@ -176,7 +212,9 @@ void main() {
       );
       final repository = _SignedInAuthenticationRepository();
 
-      await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
+      await tester.pumpWidget(
+        _buildTestApp(router: router, repository: repository),
+      );
 
       await tester.pumpAndSettle();
 
@@ -199,7 +237,9 @@ void main() {
       );
       final repository = _SignedInAuthenticationRepository();
 
-      await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
+      await tester.pumpWidget(
+        _buildTestApp(router: router, repository: repository),
+      );
 
       await tester.pumpAndSettle();
 
@@ -209,7 +249,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(HomePlaceholderPage), findsOneWidget);
-      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.home);
+      expect(
+        router.routeInformationProvider.value.uri.path,
+        PortalRoutePaths.home,
+      );
       expect(tester.takeException(), isNull);
 
       await _disposeRouter(tester, router);
@@ -225,7 +268,9 @@ void main() {
 
       await _setTestViewport(tester, const Size(390, 844));
 
-      await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
+      await tester.pumpWidget(
+        _buildTestApp(router: router, repository: repository),
+      );
 
       await tester.pumpAndSettle();
 
@@ -246,7 +291,9 @@ void main() {
 
       await _setTestViewport(tester, const Size(1024, 768));
 
-      await tester.pumpWidget(_buildTestApp(router: router, repository: repository));
+      await tester.pumpWidget(
+        _buildTestApp(router: router, repository: repository),
+      );
 
       await tester.pumpAndSettle();
 
@@ -259,7 +306,10 @@ void main() {
   });
 }
 
-Widget _buildTestApp({required GoRouter router, required AuthenticationRepository repository}) {
+Widget _buildTestApp({
+  required GoRouter router,
+  required AuthenticationRepository repository,
+}) {
   return ProviderScope(
     overrides: [authenticationRepositoryProvider.overrideWithValue(repository)],
     child: PortalApp(router: router),
@@ -271,7 +321,10 @@ Future<void> _tapCompactDestination(WidgetTester tester, String label) async {
 
   expect(navigationBarFinder, findsOneWidget);
 
-  final destinationFinder = find.descendant(of: navigationBarFinder, matching: find.text(label));
+  final destinationFinder = find.descendant(
+    of: navigationBarFinder,
+    matching: find.text(label),
+  );
 
   expect(destinationFinder, findsOneWidget);
 
@@ -299,7 +352,8 @@ Future<void> _disposeRouter(WidgetTester tester, GoRouter router) async {
   router.dispose();
 }
 
-final class _SignedInAuthenticationRepository implements AuthenticationRepository {
+final class _SignedInAuthenticationRepository
+    implements AuthenticationRepository {
   static const PortalUser _user = PortalUser(
     id: 'test-user',
     displayName: 'Test Employee',

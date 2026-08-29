@@ -17,7 +17,10 @@ class DesignSystemPreviewPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsetsDirectional.all(PortalSpacing.md),
         children: [
-          Text('Portal App components', style: Theme.of(context).textTheme.headlineMedium),
+          Text(
+            'Portal App components',
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
           const SizedBox(height: PortalSpacing.sm),
           Text(
             'Development preview using synthetic content.',
@@ -28,11 +31,18 @@ class DesignSystemPreviewPage extends StatelessWidget {
           const SizedBox(height: PortalSpacing.xl),
           const _PreviewSection(title: 'Buttons', child: _ButtonsPreview()),
           const SizedBox(height: PortalSpacing.xl),
-          const _PreviewSection(title: 'Status badges', child: _StatusBadgesPreview()),
+          const _PreviewSection(
+            title: 'Status badges',
+            child: _StatusBadgesPreview(),
+          ),
           const SizedBox(height: PortalSpacing.xl),
           const _PreviewSection(
             title: 'Loading state',
-            child: PortalCard(child: PortalLoadingState(message: 'Loading employee information')),
+            child: PortalCard(
+              child: PortalLoadingState(
+                message: 'Loading employee information',
+              ),
+            ),
           ),
           const SizedBox(height: PortalSpacing.xl),
           const _PreviewSection(
@@ -172,7 +182,11 @@ class _ButtonsPreview extends StatelessWidget {
           onPressed: () {},
         ),
         const SizedBox(height: PortalSpacing.sm),
-        const PortalButton(label: 'Disabled action', expand: true, onPressed: null),
+        const PortalButton(
+          label: 'Disabled action',
+          expand: true,
+          onPressed: null,
+        ),
       ],
     );
   }
@@ -190,7 +204,10 @@ class _StatusBadgesPreview extends StatelessWidget {
         PortalStatusBadge(label: 'Approved', type: PortalStatusType.success),
         PortalStatusBadge(label: 'Pending', type: PortalStatusType.warning),
         PortalStatusBadge(label: 'Rejected', type: PortalStatusType.error),
-        PortalStatusBadge(label: 'Information', type: PortalStatusType.information),
+        PortalStatusBadge(
+          label: 'Information',
+          type: PortalStatusType.information,
+        ),
         PortalStatusBadge(label: 'Draft', type: PortalStatusType.neutral),
       ],
     );

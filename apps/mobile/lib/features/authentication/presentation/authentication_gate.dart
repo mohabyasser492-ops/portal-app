@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/widgets/feedback/portal_error_state.dart';
-import '../../../core/widgets/feedback/portal_loading_state.dart';
 import '../application/authentication_controller.dart';
 import '../domain/authentication_status.dart';
+import 'authentication_failure_page.dart';
+import 'authentication_loading_page.dart';
 import 'signed_out_page.dart';
 
 /// Displays application content according to the authentication state.
 ///
-/// The initial session restoration check is performed after the first frame,
-/// ensuring that Riverpod is fully available before the controller is read.
+/// This component remains available for focused authentication tests and for
+/// hosts that want to protect a child widget without using router redirects.
+///
+/// The main Portal App router may use public authentication routes instead.
 class AuthenticationGate extends ConsumerStatefulWidget {
   const AuthenticationGate({
     required this.authenticatedChild,
@@ -18,12 +20,13 @@ class AuthenticationGate extends ConsumerStatefulWidget {
     super.key,
   });
 
-  /// Application content displayed after successful authentication.
+  /// Application content displayed after authentication succeeds.
   final Widget authenticatedChild;
 
-  /// Whether the gate should perform the initial session restoration check.
+  /// Whether the gate should perform session restoration after mounting.
   ///
-  /// Tests may disable initialization when manually controlling provider state.
+  /// Tests may disable initialization when authentication state is controlled
+  /// manually.
   final bool initializeSession;
 
   @override
@@ -65,7 +68,7 @@ class _AuthenticationGateState extends ConsumerState<AuthenticationGate> {
     final authenticationState = ref.watch(authenticationControllerProvider);
 
     return switch (authenticationState.status) {
-      AuthenticationStatus.initializing => const _AuthenticationLoadingPage(
+      AuthenticationStatus.initializing => const AuthenticationLoadingPage(
         message: 'Checking your session',
         semanticLabel: 'Checking for an existing authentication session',
       ),
@@ -75,11 +78,11 @@ class _AuthenticationGateState extends ConsumerState<AuthenticationGate> {
         onSignIn: _signIn,
       ),
       AuthenticationStatus.signedIn => widget.authenticatedChild,
-      AuthenticationStatus.signingOut => const _AuthenticationLoadingPage(
+      AuthenticationStatus.signingOut => const AuthenticationLoadingPage(
         message: 'Signing out',
         semanticLabel: 'Signing out of Portal App',
       ),
-      AuthenticationStatus.failure => _AuthenticationFailurePage(
+      AuthenticationStatus.failure => AuthenticationFailurePage(
         message:
             authenticationState.errorMessage ??
             'Authentication could not be completed.',
@@ -87,64 +90,5 @@ class _AuthenticationGateState extends ConsumerState<AuthenticationGate> {
         onDismiss: _clearFailure,
       ),
     };
-  }
-}
-
-/// Full-page authentication loading presentation.
-class _AuthenticationLoadingPage extends StatelessWidget {
-  const _AuthenticationLoadingPage({
-    required this.message,
-    required this.semanticLabel,
-  });
-
-  final String message;
-  final String semanticLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: PortalLoadingState(
-            message: message,
-            semanticLabel: semanticLabel,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Full-page recoverable authentication error.
-class _AuthenticationFailurePage extends StatelessWidget {
-  const _AuthenticationFailurePage({
-    required this.message,
-    required this.onRetry,
-    required this.onDismiss,
-  });
-
-  final String message;
-  final VoidCallback onRetry;
-  final VoidCallback onDismiss;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: PortalErrorState(
-              title: 'Authentication unavailable',
-              description: message,
-              retryLabel: 'Try again',
-              onRetry: onRetry,
-              secondaryActionLabel: 'Back to sign in',
-              onSecondaryAction: onDismiss,
-              semanticLabel: 'Authentication unavailable. $message',
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }

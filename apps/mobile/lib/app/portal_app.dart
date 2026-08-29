@@ -35,13 +35,16 @@ class _PortalAppState extends ConsumerState<PortalApp> {
 
   late final AuthenticationRedirectStore _redirectStore;
 
-  late final ProviderSubscription<AuthenticationState> _authenticationSubscription;
+  late final ProviderSubscription<AuthenticationState>
+  _authenticationSubscription;
 
   @override
   void initState() {
     super.initState();
 
-    final initialAuthenticationState = ref.read(authenticationControllerProvider);
+    final initialAuthenticationState = ref.read(
+      authenticationControllerProvider,
+    );
 
     _authenticationRefreshNotifier = AuthenticationRouterRefreshNotifier(
       initialState: initialAuthenticationState,

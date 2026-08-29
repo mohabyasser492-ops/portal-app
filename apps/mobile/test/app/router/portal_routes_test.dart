@@ -75,7 +75,10 @@ void main() {
 
       expect(PortalRoutePaths.authenticationLoading, '/auth-loading');
 
-      expect(PortalRoutePaths.signIn, isNot(PortalRoutePaths.authenticationLoading));
+      expect(
+        PortalRoutePaths.signIn,
+        isNot(PortalRoutePaths.authenticationLoading),
+      );
     });
   });
 }

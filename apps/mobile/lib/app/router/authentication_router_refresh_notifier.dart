@@ -4,8 +4,9 @@ import '../../features/authentication/application/authentication_state.dart';
 
 /// Notifies GoRouter when authentication state changes.
 final class AuthenticationRouterRefreshNotifier extends ChangeNotifier {
-  AuthenticationRouterRefreshNotifier({required AuthenticationState initialState})
-    : _authenticationState = initialState;
+  AuthenticationRouterRefreshNotifier({
+    required AuthenticationState initialState,
+  }) : _authenticationState = initialState;
 
   AuthenticationState _authenticationState;
 

@@ -12,7 +12,11 @@ void main() {
 
   runApp(
     ProviderScope(
-      overrides: [authenticationRepositoryProvider.overrideWithValue(authenticationRepository)],
+      overrides: [
+        authenticationRepositoryProvider.overrideWithValue(
+          authenticationRepository,
+        ),
+      ],
       child: const PortalApp(),
     ),
   );

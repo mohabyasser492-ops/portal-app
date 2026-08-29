@@ -43,14 +43,17 @@ class SignInRoutePage extends ConsumerWidget {
               child: PortalErrorState(
                 title: 'Authentication unavailable',
                 description:
-                    authenticationState.errorMessage ?? 'Authentication could not be completed.',
+                    authenticationState.errorMessage ??
+                    'Authentication could not be completed.',
                 retryLabel: 'Try again',
                 onRetry: () {
                   _signIn(ref);
                 },
                 secondaryActionLabel: 'Back to sign in',
                 onSecondaryAction: () {
-                  ref.read(authenticationControllerProvider.notifier).clearFailure();
+                  ref
+                      .read(authenticationControllerProvider.notifier)
+                      .clearFailure();
                 },
                 semanticLabel:
                     'Authentication unavailable. '

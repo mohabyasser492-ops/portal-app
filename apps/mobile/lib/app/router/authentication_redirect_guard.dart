@@ -11,8 +11,9 @@ import 'portal_route_paths.dart';
 /// The router will call [redirect] whenever navigation or authentication state
 /// changes.
 final class AuthenticationRedirectGuard {
-  AuthenticationRedirectGuard({required AuthenticationRedirectStore redirectStore})
-    : _redirectStore = redirectStore;
+  AuthenticationRedirectGuard({
+    required AuthenticationRedirectStore redirectStore,
+  }) : _redirectStore = redirectStore;
 
   final AuthenticationRedirectStore _redirectStore;
 
@@ -25,19 +26,27 @@ final class AuthenticationRedirectGuard {
   }) {
     final normalizedLocation = _normalizeLocation(currentLocation);
 
-    final isAuthenticationLocation = _isAuthenticationLocation(normalizedLocation);
+    final isAuthenticationLocation = _isAuthenticationLocation(
+      normalizedLocation,
+    );
 
     return switch (authenticationState.status) {
-      AuthenticationStatus.initializing => _redirectWhileInitializing(normalizedLocation),
+      AuthenticationStatus.initializing => _redirectWhileInitializing(
+        normalizedLocation,
+      ),
       AuthenticationStatus.signedOut => _redirectWhileSignedOut(
         normalizedLocation,
         isAuthenticationLocation: isAuthenticationLocation,
       ),
-      AuthenticationStatus.signingIn => _redirectWhileSigningIn(normalizedLocation),
+      AuthenticationStatus.signingIn => _redirectWhileSigningIn(
+        normalizedLocation,
+      ),
       AuthenticationStatus.signedIn => _redirectWhileSignedIn(
         isAuthenticationLocation: isAuthenticationLocation,
       ),
-      AuthenticationStatus.signingOut => _redirectWhileSigningOut(normalizedLocation),
+      AuthenticationStatus.signingOut => _redirectWhileSigningOut(
+        normalizedLocation,
+      ),
       AuthenticationStatus.failure => _redirectWhileSignedOut(
         normalizedLocation,
         isAuthenticationLocation: isAuthenticationLocation,

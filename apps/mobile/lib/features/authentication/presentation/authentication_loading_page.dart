@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../app/theme/portal_design_system.dart';
 import '../../../core/widgets/feedback/portal_loading_state.dart';
 
-/// Public loading route displayed during authentication transitions.
+/// Displays a full-page authentication loading state.
 class AuthenticationLoadingPage extends StatelessWidget {
   const AuthenticationLoadingPage({
     this.message = 'Checking your session',
@@ -14,7 +14,7 @@ class AuthenticationLoadingPage extends StatelessWidget {
   /// User-facing loading message.
   final String message;
 
-  /// Accessible loading announcement.
+  /// Loading announcement exposed to assistive technologies.
   final String semanticLabel;
 
   @override

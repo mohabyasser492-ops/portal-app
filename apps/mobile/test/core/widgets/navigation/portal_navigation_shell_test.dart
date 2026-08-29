@@ -238,7 +238,9 @@ void main() {
         ),
       );
 
-      final navigationBar = tester.widget<NavigationBar>(find.byType(NavigationBar));
+      final navigationBar = tester.widget<NavigationBar>(
+        find.byType(NavigationBar),
+      );
 
       expect(navigationBar.selectedIndex, 2);
     });
@@ -255,12 +257,16 @@ void main() {
         ),
       );
 
-      final navigationRail = tester.widget<NavigationRail>(find.byType(NavigationRail));
+      final navigationRail = tester.widget<NavigationRail>(
+        find.byType(NavigationRail),
+      );
 
       expect(navigationRail.selectedIndex, 3);
     });
 
-    testWidgets('renders correctly in Arabic RTL on compact screens', (tester) async {
+    testWidgets('renders correctly in Arabic RTL on compact screens', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _buildTestApp(
           const PortalNavigationShell(
@@ -280,7 +286,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('renders correctly in Arabic RTL on wide screens', (tester) async {
+    testWidgets('renders correctly in Arabic RTL on wide screens', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _buildTestApp(
           const PortalNavigationShell(

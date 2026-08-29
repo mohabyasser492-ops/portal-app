@@ -87,7 +87,8 @@ final class AuthenticationRedirectStore {
       return false;
     }
 
-    if (uri.path == PortalRoutePaths.signIn || uri.path == PortalRoutePaths.authenticationLoading) {
+    if (uri.path == PortalRoutePaths.signIn ||
+        uri.path == PortalRoutePaths.authenticationLoading) {
       return false;
     }
 

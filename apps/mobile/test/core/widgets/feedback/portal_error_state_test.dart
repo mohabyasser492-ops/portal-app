@@ -6,7 +6,9 @@ import 'package:portal_app/core/widgets/feedback/portal_error_state.dart';
 void main() {
   group('PortalErrorState', () {
     testWidgets('renders the title', (tester) async {
-      await tester.pumpWidget(_buildTestApp(const PortalErrorState(title: 'Something went wrong')));
+      await tester.pumpWidget(
+        _buildTestApp(const PortalErrorState(title: 'Something went wrong')),
+      );
 
       expect(find.byType(PortalErrorState), findsOneWidget);
       expect(find.text('Something went wrong'), findsOneWidget);
@@ -28,7 +30,9 @@ void main() {
     });
 
     testWidgets('renders the default icon', (tester) async {
-      await tester.pumpWidget(_buildTestApp(const PortalErrorState(title: 'Something went wrong')));
+      await tester.pumpWidget(
+        _buildTestApp(const PortalErrorState(title: 'Something went wrong')),
+      );
 
       expect(find.byIcon(Icons.error_outline), findsOneWidget);
     });
@@ -36,7 +40,10 @@ void main() {
     testWidgets('renders a custom icon', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
-          const PortalErrorState(title: 'Connection unavailable', icon: Icons.cloud_off_outlined),
+          const PortalErrorState(
+            title: 'Connection unavailable',
+            icon: Icons.cloud_off_outlined,
+          ),
         ),
       );
 
@@ -44,8 +51,12 @@ void main() {
       expect(find.byIcon(Icons.error_outline), findsNothing);
     });
 
-    testWidgets('does not render recovery actions when omitted', (tester) async {
-      await tester.pumpWidget(_buildTestApp(const PortalErrorState(title: 'Something went wrong')));
+    testWidgets('does not render recovery actions when omitted', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _buildTestApp(const PortalErrorState(title: 'Something went wrong')),
+      );
 
       expect(find.text('Try again'), findsNothing);
       expect(find.text('Go back'), findsNothing);
@@ -138,7 +149,9 @@ void main() {
     });
 
     testWidgets('uses the title as the semantic label', (tester) async {
-      await tester.pumpWidget(_buildTestApp(const PortalErrorState(title: 'Something went wrong')));
+      await tester.pumpWidget(
+        _buildTestApp(const PortalErrorState(title: 'Something went wrong')),
+      );
 
       final semantics = _findErrorSemantics(tester);
 
@@ -158,7 +171,10 @@ void main() {
 
       final semantics = _findErrorSemantics(tester);
 
-      expect(semantics.properties.label, 'Unable to load data. Check your connection.');
+      expect(
+        semantics.properties.label,
+        'Unable to load data. Check your connection.',
+      );
     });
 
     testWidgets('uses a custom semantic label', (tester) async {
@@ -202,7 +218,8 @@ void main() {
         _buildTestApp(
           PortalErrorState(
             title: 'Unable to load the latest employee information',
-            description: 'Check the connection and try loading the information again.',
+            description:
+                'Check the connection and try loading the information again.',
             retryLabel: 'Try loading again',
             onRetry: () {},
             secondaryActionLabel: 'Return to previous page',
@@ -262,7 +279,10 @@ Widget _buildTestApp(
       child: Directionality(
         textDirection: textDirection,
         child: Scaffold(
-          body: SingleChildScrollView(padding: const EdgeInsets.all(16), child: child),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: child,
+          ),
         ),
       ),
     ),
