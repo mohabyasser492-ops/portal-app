@@ -1,6 +1,7 @@
 using PortalApp.Api.Cancellation;
 using PortalApp.Api.Configuration;
 using PortalApp.Api.Errors;
+using PortalApp.Api.FileSecurity;
 using PortalApp.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,8 @@ builder.Services.AddPortalSharePoint(
 
 builder.Services.AddPortalRateLimiting();
 builder.Services.AddPortalRequestCancellation(
+    builder.Configuration);
+builder.Services.AddPortalFileSecurity(
     builder.Configuration);
 
 builder.Services.AddSingleton<PortalProblemDetailsCustomizer>();
