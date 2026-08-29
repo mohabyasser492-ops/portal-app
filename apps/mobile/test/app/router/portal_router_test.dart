@@ -11,6 +11,7 @@ import 'package:portal_app/features/not_found/presentation/not_found_page.dart';
 import 'package:portal_app/features/profile/presentation/profile_placeholder_page.dart';
 import 'package:portal_app/features/requests/presentation/requests_placeholder_page.dart';
 import 'package:portal_app/features/services/presentation/services_placeholder_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
   group('PortalRouter', () {
@@ -25,18 +26,13 @@ void main() {
 
       expect(find.byType(PortalNavigationShell), findsOneWidget);
 
-      expect(
-        router.routeInformationProvider.value.uri.path,
-        PortalRoutePaths.home,
-      );
+      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.home);
 
       router.dispose();
     });
 
     testWidgets('starts at a supplied initial location', (tester) async {
-      final router = createPortalRouter(
-        initialLocation: PortalRoutePaths.services,
-      );
+      final router = createPortalRouter(initialLocation: PortalRoutePaths.services);
 
       await tester.pumpWidget(_buildTestApp(router));
 
@@ -44,17 +40,12 @@ void main() {
 
       expect(find.byType(ServicesPlaceholderPage), findsOneWidget);
 
-      expect(
-        router.routeInformationProvider.value.uri.path,
-        PortalRoutePaths.services,
-      );
+      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.services);
 
       router.dispose();
     });
 
-    testWidgets('navigates to Services from the navigation bar', (
-      tester,
-    ) async {
+    testWidgets('navigates to Services from the navigation bar', (tester) async {
       final router = createPortalRouter();
 
       await tester.pumpWidget(_buildTestApp(router));
@@ -67,17 +58,12 @@ void main() {
 
       expect(find.byType(ServicesPlaceholderPage), findsOneWidget);
 
-      expect(
-        router.routeInformationProvider.value.uri.path,
-        PortalRoutePaths.services,
-      );
+      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.services);
 
       router.dispose();
     });
 
-    testWidgets('navigates to Requests from the navigation bar', (
-      tester,
-    ) async {
+    testWidgets('navigates to Requests from the navigation bar', (tester) async {
       final router = createPortalRouter();
 
       await tester.pumpWidget(_buildTestApp(router));
@@ -90,10 +76,7 @@ void main() {
 
       expect(find.byType(RequestsPlaceholderPage), findsOneWidget);
 
-      expect(
-        router.routeInformationProvider.value.uri.path,
-        PortalRoutePaths.requests,
-      );
+      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.requests);
 
       router.dispose();
     });
@@ -111,10 +94,7 @@ void main() {
 
       expect(find.byType(ProfilePlaceholderPage), findsOneWidget);
 
-      expect(
-        router.routeInformationProvider.value.uri.path,
-        PortalRoutePaths.profile,
-      );
+      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.profile);
 
       router.dispose();
     });
@@ -132,17 +112,12 @@ void main() {
 
       expect(find.byType(RequestsPlaceholderPage), findsOneWidget);
 
-      expect(
-        router.routeInformationProvider.value.uri.path,
-        PortalRoutePaths.requests,
-      );
+      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.requests);
 
       router.dispose();
     });
 
-    testWidgets('shows the not-found page for an unknown route', (
-      tester,
-    ) async {
+    testWidgets('shows the not-found page for an unknown route', (tester) async {
       final router = createPortalRouter(initialLocation: '/unknown-page');
 
       await tester.pumpWidget(_buildTestApp(router));
@@ -173,10 +148,7 @@ void main() {
 
       expect(find.byType(HomePlaceholderPage), findsOneWidget);
 
-      expect(
-        router.routeInformationProvider.value.uri.path,
-        PortalRoutePaths.home,
-      );
+      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.home);
 
       router.dispose();
     });
@@ -184,9 +156,11 @@ void main() {
 }
 
 Widget _buildTestApp(GoRouter router) {
-  return MaterialApp.router(
-    title: 'Portal App Router Test',
-    theme: PortalTheme.light,
-    routerConfig: router,
+  return ProviderScope(
+    child: MaterialApp.router(
+      title: 'Portal App Router Test',
+      theme: PortalTheme.light,
+      routerConfig: router,
+    ),
   );
 }

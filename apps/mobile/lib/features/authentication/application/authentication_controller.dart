@@ -6,7 +6,9 @@ import 'authentication_state.dart';
 
 /// Provides the current authentication state and authentication operations.
 final authenticationControllerProvider =
-    NotifierProvider<AuthenticationController, AuthenticationState>(AuthenticationController.new);
+    NotifierProvider<AuthenticationController, AuthenticationState>(
+      AuthenticationController.new,
+    );
 
 /// Coordinates authentication state transitions.
 ///
@@ -38,7 +40,9 @@ class AuthenticationController extends Notifier<AuthenticationState> {
 
       state = AuthenticationState.signedIn(user);
     } catch (_) {
-      state = const AuthenticationState.failure('Unable to restore the authentication session.');
+      state = const AuthenticationState.failure(
+        'Unable to restore the authentication session.',
+      );
     }
   }
 
@@ -56,13 +60,16 @@ class AuthenticationController extends Notifier<AuthenticationState> {
 
       state = AuthenticationState.signedIn(user);
     } catch (_) {
-      state = const AuthenticationState.failure('Unable to sign in. Please try again.');
+      state = const AuthenticationState.failure(
+        'Unable to sign in. Please try again.',
+      );
     }
   }
 
   /// Ends the current authenticated session.
   Future<void> signOut() async {
-    if (!state.isAuthenticated || state.status == AuthenticationStatus.signingOut) {
+    if (!state.isAuthenticated ||
+        state.status == AuthenticationStatus.signingOut) {
       return;
     }
 
@@ -73,7 +80,9 @@ class AuthenticationController extends Notifier<AuthenticationState> {
 
       state = const AuthenticationState.signedOut();
     } catch (_) {
-      state = const AuthenticationState.failure('Unable to sign out. Please try again.');
+      state = const AuthenticationState.failure(
+        'Unable to sign out. Please try again.',
+      );
     }
   }
 

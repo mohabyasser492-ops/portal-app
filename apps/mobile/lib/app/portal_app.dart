@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/authentication/presentation/authentication_gate.dart';
 import 'router/portal_router.dart';
 import 'theme/portal_design_system.dart';
 
@@ -8,13 +9,15 @@ import 'theme/portal_design_system.dart';
 class PortalApp extends StatefulWidget {
   const PortalApp({this.router, super.key});
 
-  /// Optional router supplied by tests or application hosts.
+  /// Optional router supplied by tests.
   ///
-  /// When omitted, the application creates its standard production router.
+  /// When omitted, the application creates its standard router.
   final GoRouter? router;
 
   @override
-  State<PortalApp> createState() => _PortalAppState();
+  State<PortalApp> createState() {
+    return _PortalAppState();
+  }
 }
 
 class _PortalAppState extends State<PortalApp> {
@@ -45,6 +48,11 @@ class _PortalAppState extends State<PortalApp> {
       debugShowCheckedModeBanner: false,
       theme: PortalTheme.light,
       routerConfig: _router,
+      builder: (context, routerChild) {
+        return AuthenticationGate(
+          authenticatedChild: routerChild ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }

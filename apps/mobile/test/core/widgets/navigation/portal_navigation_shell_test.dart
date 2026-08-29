@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:portal_app/app/theme/portal_design_system.dart';
 import 'package:portal_app/core/widgets/navigation/portal_navigation_shell.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
   group('PortalNavigationShell', () {
@@ -237,9 +238,7 @@ void main() {
         ),
       );
 
-      final navigationBar = tester.widget<NavigationBar>(
-        find.byType(NavigationBar),
-      );
+      final navigationBar = tester.widget<NavigationBar>(find.byType(NavigationBar));
 
       expect(navigationBar.selectedIndex, 2);
     });
@@ -256,16 +255,12 @@ void main() {
         ),
       );
 
-      final navigationRail = tester.widget<NavigationRail>(
-        find.byType(NavigationRail),
-      );
+      final navigationRail = tester.widget<NavigationRail>(find.byType(NavigationRail));
 
       expect(navigationRail.selectedIndex, 3);
     });
 
-    testWidgets('renders correctly in Arabic RTL on compact screens', (
-      tester,
-    ) async {
+    testWidgets('renders correctly in Arabic RTL on compact screens', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
           const PortalNavigationShell(
@@ -285,9 +280,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('renders correctly in Arabic RTL on wide screens', (
-      tester,
-    ) async {
+    testWidgets('renders correctly in Arabic RTL on wide screens', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
           const PortalNavigationShell(
@@ -335,11 +328,13 @@ Widget _buildTestApp(
   TextDirection textDirection = TextDirection.ltr,
   TextScaler textScaler = TextScaler.noScaling,
 }) {
-  return MaterialApp(
-    theme: PortalTheme.light,
-    home: MediaQuery(
-      data: MediaQueryData(size: size, textScaler: textScaler),
-      child: Directionality(textDirection: textDirection, child: child),
+  return ProviderScope(
+    child: MaterialApp(
+      theme: PortalTheme.light,
+      home: MediaQuery(
+        data: MediaQueryData(size: size, textScaler: textScaler),
+        child: Directionality(textDirection: textDirection, child: child),
+      ),
     ),
   );
 }

@@ -8,7 +8,9 @@ import '../domain/authentication_repository.dart';
 /// Microsoft authentication repository.
 ///
 /// Tests override it with an in-memory fake repository.
-final authenticationRepositoryProvider = Provider<AuthenticationRepository>((ref) {
+final authenticationRepositoryProvider = Provider<AuthenticationRepository>((
+  ref,
+) {
   throw UnimplementedError(
     'authenticationRepositoryProvider must be overridden '
     'before authentication operations are used.',

@@ -8,16 +8,12 @@ void main() {
   group('PortalSkeleton', () {
     testWidgets('renders with the supplied dimensions', (tester) async {
       await tester.pumpWidget(
-        _buildTestApp(
-          const PortalSkeleton(width: 160, height: 24, animate: false),
-        ),
+        _buildTestApp(const PortalSkeleton(width: 160, height: 24, animate: false)),
       );
 
       expect(find.byType(PortalSkeleton), findsOneWidget);
 
-      final skeleton = tester.widget<PortalSkeleton>(
-        find.byType(PortalSkeleton),
-      );
+      final skeleton = tester.widget<PortalSkeleton>(find.byType(PortalSkeleton));
 
       expect(skeleton.width, 160);
       expect(skeleton.height, 24);
@@ -25,14 +21,10 @@ void main() {
 
     testWidgets('uses a rounded rectangle by default', (tester) async {
       await tester.pumpWidget(
-        _buildTestApp(
-          const PortalSkeleton(width: 160, height: 24, animate: false),
-        ),
+        _buildTestApp(const PortalSkeleton(width: 160, height: 24, animate: false)),
       );
 
-      final skeleton = tester.widget<PortalSkeleton>(
-        find.byType(PortalSkeleton),
-      );
+      final skeleton = tester.widget<PortalSkeleton>(find.byType(PortalSkeleton));
 
       expect(skeleton.shape, PortalSkeletonShape.roundedRectangle);
 
@@ -86,12 +78,7 @@ void main() {
 
       await tester.pumpWidget(
         _buildTestApp(
-          const PortalSkeleton(
-            width: 160,
-            height: 24,
-            borderRadius: customRadius,
-            animate: false,
-          ),
+          const PortalSkeleton(width: 160, height: 24, borderRadius: customRadius, animate: false),
         ),
       );
 
@@ -100,46 +87,29 @@ void main() {
       expect(decoration.borderRadius, customRadius);
     });
 
-    testWidgets('renders static decoration when animation is disabled', (
-      tester,
-    ) async {
+    testWidgets('renders static decoration when animation is disabled', (tester) async {
       await tester.pumpWidget(
-        _buildTestApp(
-          const PortalSkeleton(width: 160, height: 24, animate: false),
-        ),
+        _buildTestApp(const PortalSkeleton(width: 160, height: 24, animate: false)),
       );
 
       expect(
-        find.descendant(
-          of: find.byType(PortalSkeleton),
-          matching: find.byType(AnimatedBuilder),
-        ),
+        find.descendant(of: find.byType(PortalSkeleton), matching: find.byType(AnimatedBuilder)),
         findsNothing,
       );
 
       expect(
-        find.descendant(
-          of: find.byType(PortalSkeleton),
-          matching: find.byType(DecoratedBox),
-        ),
+        find.descendant(of: find.byType(PortalSkeleton), matching: find.byType(DecoratedBox)),
         findsOneWidget,
       );
 
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('uses an animated builder when animation is enabled', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        _buildTestApp(const PortalSkeleton(width: 160, height: 24)),
-      );
+    testWidgets('uses an animated builder when animation is enabled', (tester) async {
+      await tester.pumpWidget(_buildTestApp(const PortalSkeleton(width: 160, height: 24)));
 
       expect(
-        find.descendant(
-          of: find.byType(PortalSkeleton),
-          matching: find.byType(AnimatedBuilder),
-        ),
+        find.descendant(of: find.byType(PortalSkeleton), matching: find.byType(AnimatedBuilder)),
         findsOneWidget,
       );
 
@@ -150,36 +120,51 @@ void main() {
 
     testWidgets('can change from animated to static', (tester) async {
       await tester.pumpWidget(
-        _buildTestApp(const PortalSkeleton(width: 160, height: 24)),
+        _buildTestApp(
+          const PortalSkeleton(key: ValueKey<String>('skeleton'), width: 160, height: 24),
+        ),
       );
 
-      expect(find.byType(AnimatedBuilder), findsOneWidget);
+      final animatedFinder = find.descendant(
+        of: find.byKey(const ValueKey<String>('skeleton')),
+        matching: find.byType(AnimatedBuilder),
+      );
+
+      expect(animatedFinder, findsOneWidget);
 
       await tester.pumpWidget(
         _buildTestApp(
-          const PortalSkeleton(width: 160, height: 24, animate: false),
+          const PortalSkeleton(
+            key: ValueKey<String>('skeleton'),
+            width: 160,
+            height: 24,
+            animate: false,
+          ),
         ),
       );
 
       await tester.pump();
 
-      expect(find.byType(AnimatedBuilder), findsNothing);
+      final updatedAnimatedFinder = find.descendant(
+        of: find.byKey(const ValueKey<String>('skeleton')),
+        matching: find.byType(AnimatedBuilder),
+      );
+
+      expect(updatedAnimatedFinder, findsNothing);
 
       expect(tester.takeException(), isNull);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump();
     });
 
     testWidgets('is excluded from accessibility semantics', (tester) async {
       await tester.pumpWidget(
-        _buildTestApp(
-          const PortalSkeleton(width: 160, height: 24, animate: false),
-        ),
+        _buildTestApp(const PortalSkeleton(width: 160, height: 24, animate: false)),
       );
 
       expect(
-        find.descendant(
-          of: find.byType(PortalSkeleton),
-          matching: find.byType(ExcludeSemantics),
-        ),
+        find.descendant(of: find.byType(PortalSkeleton), matching: find.byType(ExcludeSemantics)),
         findsOneWidget,
       );
     });
@@ -188,9 +173,7 @@ void main() {
   group('PortalTextSkeleton', () {
     testWidgets('renders the requested number of lines', (tester) async {
       await tester.pumpWidget(
-        _buildTestApp(
-          const PortalTextSkeleton(width: 240, lines: 3, animate: false),
-        ),
+        _buildTestApp(const PortalTextSkeleton(width: 240, lines: 3, animate: false)),
       );
 
       expect(find.byType(PortalTextSkeleton), findsOneWidget);
@@ -201,18 +184,11 @@ void main() {
     testWidgets('uses the supplied line height', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
-          const PortalTextSkeleton(
-            width: 240,
-            lines: 3,
-            lineHeight: 18,
-            animate: false,
-          ),
+          const PortalTextSkeleton(width: 240, lines: 3, lineHeight: 18, animate: false),
         ),
       );
 
-      final lines = tester
-          .widgetList<PortalSkeleton>(find.byType(PortalSkeleton))
-          .toList();
+      final lines = tester.widgetList<PortalSkeleton>(find.byType(PortalSkeleton)).toList();
 
       expect(lines.length, 3);
 
@@ -221,23 +197,14 @@ void main() {
       }
     });
 
-    testWidgets('uses full width for lines before the final line', (
-      tester,
-    ) async {
+    testWidgets('uses full width for lines before the final line', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
-          const PortalTextSkeleton(
-            width: 200,
-            lines: 3,
-            lastLineWidthFactor: 0.5,
-            animate: false,
-          ),
+          const PortalTextSkeleton(width: 200, lines: 3, lastLineWidthFactor: 0.5, animate: false),
         ),
       );
 
-      final lines = tester
-          .widgetList<PortalSkeleton>(find.byType(PortalSkeleton))
-          .toList();
+      final lines = tester.widgetList<PortalSkeleton>(find.byType(PortalSkeleton)).toList();
 
       expect(lines[0].width, 200);
       expect(lines[1].width, 200);
@@ -247,12 +214,7 @@ void main() {
     testWidgets('renders one shortened line when lines is one', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
-          const PortalTextSkeleton(
-            width: 200,
-            lines: 1,
-            lastLineWidthFactor: 0.75,
-            animate: false,
-          ),
+          const PortalTextSkeleton(width: 200, lines: 1, lastLineWidthFactor: 0.75, animate: false),
         ),
       );
 
@@ -263,14 +225,10 @@ void main() {
 
     testWidgets('passes animation preference to every line', (tester) async {
       await tester.pumpWidget(
-        _buildTestApp(
-          const PortalTextSkeleton(width: 240, lines: 3, animate: false),
-        ),
+        _buildTestApp(const PortalTextSkeleton(width: 240, lines: 3, animate: false)),
       );
 
-      final lines = tester.widgetList<PortalSkeleton>(
-        find.byType(PortalSkeleton),
-      );
+      final lines = tester.widgetList<PortalSkeleton>(find.byType(PortalSkeleton));
 
       expect(lines.every((line) => line.animate == false), isTrue);
     });
@@ -291,13 +249,9 @@ void main() {
 
   group('PortalListTileSkeleton', () {
     testWidgets('renders a leading placeholder by default', (tester) async {
-      await tester.pumpWidget(
-        _buildTestApp(const PortalListTileSkeleton(animate: false)),
-      );
+      await tester.pumpWidget(_buildTestApp(const PortalListTileSkeleton(animate: false)));
 
-      final skeletons = tester
-          .widgetList<PortalSkeleton>(find.byType(PortalSkeleton))
-          .toList();
+      final skeletons = tester.widgetList<PortalSkeleton>(find.byType(PortalSkeleton)).toList();
 
       expect(skeletons.length, 3);
 
@@ -310,37 +264,22 @@ void main() {
 
     testWidgets('hides the leading placeholder when requested', (tester) async {
       await tester.pumpWidget(
-        _buildTestApp(
-          const PortalListTileSkeleton(showLeading: false, animate: false),
-        ),
+        _buildTestApp(const PortalListTileSkeleton(showLeading: false, animate: false)),
       );
 
-      final skeletons = tester
-          .widgetList<PortalSkeleton>(find.byType(PortalSkeleton))
-          .toList();
+      final skeletons = tester.widgetList<PortalSkeleton>(find.byType(PortalSkeleton)).toList();
 
       expect(skeletons.length, 2);
 
-      expect(
-        skeletons.any(
-          (skeleton) => skeleton.shape == PortalSkeletonShape.circle,
-        ),
-        isFalse,
-      );
+      expect(skeletons.any((skeleton) => skeleton.shape == PortalSkeletonShape.circle), isFalse);
     });
 
-    testWidgets('renders a trailing placeholder when requested', (
-      tester,
-    ) async {
+    testWidgets('renders a trailing placeholder when requested', (tester) async {
       await tester.pumpWidget(
-        _buildTestApp(
-          const PortalListTileSkeleton(showTrailing: true, animate: false),
-        ),
+        _buildTestApp(const PortalListTileSkeleton(showTrailing: true, animate: false)),
       );
 
-      final skeletons = tester
-          .widgetList<PortalSkeleton>(find.byType(PortalSkeleton))
-          .toList();
+      final skeletons = tester.widgetList<PortalSkeleton>(find.byType(PortalSkeleton)).toList();
 
       expect(skeletons.length, 4);
 
@@ -351,16 +290,10 @@ void main() {
       expect(trailingSkeletons.length, 1);
     });
 
-    testWidgets('renders without leading or trailing placeholders', (
-      tester,
-    ) async {
+    testWidgets('renders without leading or trailing placeholders', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
-          const PortalListTileSkeleton(
-            showLeading: false,
-            showTrailing: false,
-            animate: false,
-          ),
+          const PortalListTileSkeleton(showLeading: false, showTrailing: false, animate: false),
         ),
       );
 
@@ -369,18 +302,12 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('passes animation preference to all placeholders', (
-      tester,
-    ) async {
+    testWidgets('passes animation preference to all placeholders', (tester) async {
       await tester.pumpWidget(
-        _buildTestApp(
-          const PortalListTileSkeleton(showTrailing: true, animate: false),
-        ),
+        _buildTestApp(const PortalListTileSkeleton(showTrailing: true, animate: false)),
       );
 
-      final skeletons = tester.widgetList<PortalSkeleton>(
-        find.byType(PortalSkeleton),
-      );
+      final skeletons = tester.widgetList<PortalSkeleton>(find.byType(PortalSkeleton));
 
       expect(skeletons.every((skeleton) => !skeleton.animate), isTrue);
     });
@@ -390,9 +317,7 @@ void main() {
         _buildTestApp(const PortalListTileSkeleton(width: 300, animate: false)),
       );
 
-      final listTile = tester.widget<PortalListTileSkeleton>(
-        find.byType(PortalListTileSkeleton),
-      );
+      final listTile = tester.widget<PortalListTileSkeleton>(find.byType(PortalListTileSkeleton));
 
       expect(listTile.width, 300);
     });
@@ -444,10 +369,7 @@ BoxDecoration _findSkeletonDecoration(WidgetTester tester) {
   return decoratedBox.decoration as BoxDecoration;
 }
 
-Widget _buildTestApp(
-  Widget child, {
-  TextDirection textDirection = TextDirection.ltr,
-}) {
+Widget _buildTestApp(Widget child, {TextDirection textDirection = TextDirection.ltr}) {
   return MaterialApp(
     theme: PortalTheme.light,
     home: Directionality(
