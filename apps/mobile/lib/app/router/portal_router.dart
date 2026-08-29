@@ -10,48 +10,45 @@ import '../../features/services/presentation/services_placeholder_page.dart';
 import 'portal_route_names.dart';
 import 'portal_route_paths.dart';
 
-/// Root navigator key used for pages displayed above the navigation shell.
-final GlobalKey<NavigatorState> portalRootNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'portal-root-navigator');
-
-/// Navigator key for the Home branch.
-final GlobalKey<NavigatorState> portalHomeNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'portal-home-navigator');
-
-/// Navigator key for the Services branch.
-final GlobalKey<NavigatorState> portalServicesNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'portal-services-navigator');
-
-/// Navigator key for the Requests branch.
-final GlobalKey<NavigatorState> portalRequestsNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'portal-requests-navigator');
-
-/// Navigator key for the Profile branch.
-final GlobalKey<NavigatorState> portalProfileNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'portal-profile-navigator');
-
 /// Creates the central Portal App router.
 ///
-/// A new router can be created for each test, preventing navigation state from
-/// leaking between test cases.
-GoRouter createPortalRouter({String initialLocation = PortalRoutePaths.home}) {
+/// A fresh router and fresh navigator keys are created for each invocation.
+/// This avoids navigation state leaking between widget tests.
+GoRouter createPortalRouter({
+  String initialLocation = PortalRoutePaths.home,
+  Listenable? refreshListenable,
+}) {
+  final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'portal-root-navigator');
+
+  final homeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'portal-home-navigator');
+
+  final servicesNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'portal-services-navigator');
+
+  final requestsNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'portal-requests-navigator');
+
+  final profileNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'portal-profile-navigator');
+
   return GoRouter(
-    navigatorKey: portalRootNavigatorKey,
+    navigatorKey: rootNavigatorKey,
     initialLocation: initialLocation,
+    refreshListenable: refreshListenable,
     routes: [
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return PortalNavigationShell(
             currentIndex: navigationShell.currentIndex,
             onDestinationSelected: (index) {
-              navigationShell.goBranch(index);
+              navigationShell.goBranch(
+                index,
+                initialLocation: index == navigationShell.currentIndex,
+              );
             },
             child: navigationShell,
           );
         },
         branches: [
           StatefulShellBranch(
-            navigatorKey: portalHomeNavigatorKey,
+            navigatorKey: homeNavigatorKey,
             routes: [
               GoRoute(
                 path: PortalRoutePaths.home,
@@ -63,7 +60,7 @@ GoRouter createPortalRouter({String initialLocation = PortalRoutePaths.home}) {
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: portalServicesNavigatorKey,
+            navigatorKey: servicesNavigatorKey,
             routes: [
               GoRoute(
                 path: PortalRoutePaths.services,
@@ -75,7 +72,7 @@ GoRouter createPortalRouter({String initialLocation = PortalRoutePaths.home}) {
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: portalRequestsNavigatorKey,
+            navigatorKey: requestsNavigatorKey,
             routes: [
               GoRoute(
                 path: PortalRoutePaths.requests,
@@ -87,7 +84,7 @@ GoRouter createPortalRouter({String initialLocation = PortalRoutePaths.home}) {
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: portalProfileNavigatorKey,
+            navigatorKey: profileNavigatorKey,
             routes: [
               GoRoute(
                 path: PortalRoutePaths.profile,
@@ -99,6 +96,14 @@ GoRouter createPortalRouter({String initialLocation = PortalRoutePaths.home}) {
             ],
           ),
         ],
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: PortalRoutePaths.designSystem,
+        name: PortalRouteNames.designSystem,
+        builder: (context, state) {
+          return const Scaffold(body: Center(child: Text('Design system preview')));
+        },
       ),
     ],
     errorBuilder: (context, state) {

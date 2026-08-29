@@ -7,18 +7,10 @@ import '../application/authentication_controller.dart';
 import '../domain/authentication_status.dart';
 import 'signed_out_page.dart';
 
-/// Displays application content according to the current authentication state.
+/// Displays application content according to the authentication state.
 ///
-/// The gate performs the initial session restoration check when mounted.
-///
-/// State behavior:
-///
-/// - initializing: displays a session-loading state
-/// - signedOut: displays the sign-in page
-/// - signingIn: displays the sign-in page in loading mode
-/// - signedIn: displays [authenticatedChild]
-/// - signingOut: displays a sign-out loading state
-/// - failure: displays a recoverable authentication error
+/// The initial session restoration check is performed after the first frame,
+/// ensuring that Riverpod is fully available before the controller is read.
 class AuthenticationGate extends ConsumerStatefulWidget {
   const AuthenticationGate({
     required this.authenticatedChild,
@@ -31,8 +23,7 @@ class AuthenticationGate extends ConsumerStatefulWidget {
 
   /// Whether the gate should perform the initial session restoration check.
   ///
-  /// Tests may disable this when they need to inspect a manually controlled
-  /// authentication state.
+  /// Tests may disable initialization when manually controlling provider state.
   final bool initializeSession;
 
   @override
@@ -47,16 +38,26 @@ class _AuthenticationGateState extends ConsumerState<AuthenticationGate> {
     super.initState();
 
     if (widget.initializeSession) {
-      Future<void>.microtask(_initializeAuthentication);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) {
+          return;
+        }
+
+        _initializeAuthentication();
+      });
     }
   }
 
   Future<void> _initializeAuthentication() async {
-    if (!mounted) {
-      return;
-    }
-
     await ref.read(authenticationControllerProvider.notifier).initialize();
+  }
+
+  Future<void> _signIn() async {
+    await ref.read(authenticationControllerProvider.notifier).signIn();
+  }
+
+  void _clearFailure() {
+    ref.read(authenticationControllerProvider.notifier).clearFailure();
   }
 
   @override
@@ -83,12 +84,9 @@ class _AuthenticationGateState extends ConsumerState<AuthenticationGate> {
             authenticationState.errorMessage ??
             'Authentication could not be completed.',
         onRetry: _signIn,
+        onDismiss: _clearFailure,
       ),
     };
-  }
-
-  Future<void> _signIn() async {
-    await ref.read(authenticationControllerProvider.notifier).signIn();
   }
 }
 
@@ -122,10 +120,12 @@ class _AuthenticationFailurePage extends StatelessWidget {
   const _AuthenticationFailurePage({
     required this.message,
     required this.onRetry,
+    required this.onDismiss,
   });
 
   final String message;
   final VoidCallback onRetry;
+  final VoidCallback onDismiss;
 
   @override
   Widget build(BuildContext context) {
@@ -134,11 +134,13 @@ class _AuthenticationFailurePage extends StatelessWidget {
         child: Center(
           child: SingleChildScrollView(
             child: PortalErrorState(
-              title: 'Authentication failed',
+              title: 'Authentication unavailable',
               description: message,
               retryLabel: 'Try again',
               onRetry: onRetry,
-              semanticLabel: 'Authentication failed. $message',
+              secondaryActionLabel: 'Back to sign in',
+              onSecondaryAction: onDismiss,
+              semanticLabel: 'Authentication unavailable. $message',
             ),
           ),
         ),

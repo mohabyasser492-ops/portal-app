@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../domain/authentication_status.dart';
+
 import '../domain/authentication_repository.dart';
+import '../domain/authentication_status.dart';
 import 'authentication_providers.dart';
 import 'authentication_state.dart';
 
@@ -12,7 +13,7 @@ final authenticationControllerProvider =
 
 /// Coordinates authentication state transitions.
 ///
-/// Widgets should call this controller instead of calling an authentication
+/// Widgets should use this controller instead of calling an authentication
 /// repository or Microsoft authentication library directly.
 class AuthenticationController extends Notifier<AuthenticationState> {
   AuthenticationRepository get _repository {
@@ -24,7 +25,7 @@ class AuthenticationController extends Notifier<AuthenticationState> {
     return const AuthenticationState.initializing();
   }
 
-  /// Checks whether a valid existing session can be restored.
+  /// Restores an existing authentication session when available.
   Future<void> initialize() async {
     if (state.status != AuthenticationStatus.initializing) {
       return;
@@ -86,7 +87,7 @@ class AuthenticationController extends Notifier<AuthenticationState> {
     }
   }
 
-  /// Clears an authentication error and returns to the signed-out state.
+  /// Clears an authentication error and returns to signed-out state.
   void clearFailure() {
     if (!state.hasFailure) {
       return;
