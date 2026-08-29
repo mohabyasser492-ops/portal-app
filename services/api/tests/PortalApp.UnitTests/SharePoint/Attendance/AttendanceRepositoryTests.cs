@@ -317,5 +317,12 @@ public sealed class AttendanceRepositoryTests
             return Task.FromResult(
                 (GraphPage<T>)(object)page);
         }
-    }
+
+        public Task<GraphFileContent> DownloadAsync(
+            string relativePath,
+            GraphRequestContext context)
+        {
+            throw new NotSupportedException(
+                "File download is not used by attendance repository tests.");
+        }}
 }

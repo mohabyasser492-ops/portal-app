@@ -8,7 +8,8 @@ namespace PortalApp.Infrastructure.Graph;
 
 public sealed class PortalGraphClient : IPortalGraphClient
 {
-    public const string ClientName = "PortalGraph";
+    public const string ClientName =
+        "PortalGraph";
 
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
@@ -25,35 +26,62 @@ public sealed class PortalGraphClient : IPortalGraphClient
         IOptions<GraphOptions> options,
         ILogger<PortalGraphClient> logger)
     {
-        _httpClientFactory = httpClientFactory;
-        _tokenProvider = tokenProvider;
-        _options = options.Value;
-        _logger = logger;
+        ArgumentNullException.ThrowIfNull(
+            httpClientFactory);
 
-        _baseUri = new Uri(
-            EnsureTrailingSlash(_options.BaseUrl),
-            UriKind.Absolute);
+        ArgumentNullException.ThrowIfNull(
+            tokenProvider);
+
+        ArgumentNullException.ThrowIfNull(
+            options);
+
+        ArgumentNullException.ThrowIfNull(
+            logger);
+
+        _httpClientFactory =
+            httpClientFactory;
+
+        _tokenProvider =
+            tokenProvider;
+
+        _options =
+            options.Value;
+
+        _logger =
+            logger;
+
+        _baseUri =
+            new Uri(
+                EnsureTrailingSlash(
+                    _options.BaseUrl),
+                UriKind.Absolute);
     }
 
     public async Task<GraphPage<T>> GetPageAsync<T>(
         string relativePath,
         GraphRequestContext context)
     {
-        ArgumentNullException.ThrowIfNull(context);
-
-        var requestUri = CreateRequestUri(relativePath);
-
-        using var response = await SendGetAsync(
-            requestUri,
+        ArgumentNullException.ThrowIfNull(
             context);
+
+        var requestUri =
+            CreateRequestUri(
+                relativePath);
+
+        using var response =
+            await SendGetAsync(
+                requestUri,
+                context,
+                "application/json");
 
         await EnsureSuccessAsync(
             response,
             context.CancellationToken);
 
         await using var stream =
-            await response.Content.ReadAsStreamAsync(
-                context.CancellationToken);
+            await response.Content
+                .ReadAsStreamAsync(
+                    context.CancellationToken);
 
         var graphResponse =
             await JsonSerializer.DeserializeAsync<
@@ -66,7 +94,8 @@ public sealed class PortalGraphClient : IPortalGraphClient
         {
             throw new GraphServiceException(
                 "Microsoft Graph returned an empty collection response.",
-                statusCode: (int)response.StatusCode);
+                statusCode:
+                    (int)response.StatusCode);
         }
 
         return new GraphPage<T>(
@@ -78,15 +107,21 @@ public sealed class PortalGraphClient : IPortalGraphClient
         string relativePath,
         GraphRequestContext context)
     {
-        ArgumentNullException.ThrowIfNull(context);
-
-        var requestUri = CreateRequestUri(relativePath);
-
-        using var response = await SendGetAsync(
-            requestUri,
+        ArgumentNullException.ThrowIfNull(
             context);
 
-        if (response.StatusCode == HttpStatusCode.NotFound)
+        var requestUri =
+            CreateRequestUri(
+                relativePath);
+
+        using var response =
+            await SendGetAsync(
+                requestUri,
+                context,
+                "application/json");
+
+        if (response.StatusCode ==
+            HttpStatusCode.NotFound)
         {
             return default;
         }
@@ -96,28 +131,143 @@ public sealed class PortalGraphClient : IPortalGraphClient
             context.CancellationToken);
 
         await using var stream =
-            await response.Content.ReadAsStreamAsync(
-                context.CancellationToken);
+            await response.Content
+                .ReadAsStreamAsync(
+                    context.CancellationToken);
 
-        return await JsonSerializer.DeserializeAsync<T>(
-            stream,
-            JsonOptions,
-            context.CancellationToken);
+        return await JsonSerializer
+            .DeserializeAsync<T>(
+                stream,
+                JsonOptions,
+                context.CancellationToken);
+    }
+
+    public async Task<GraphFileContent> DownloadAsync(
+        string relativePath,
+        GraphRequestContext context)
+    {
+        ArgumentNullException.ThrowIfNull(
+            context);
+
+        var requestUri =
+            CreateRequestUri(
+                relativePath);
+
+        var response =
+            await SendGetAsync(
+                requestUri,
+                context,
+                "application/octet-stream");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            try
+            {
+                await EnsureSuccessAsync(
+                    response,
+                    context.CancellationToken);
+
+                throw new GraphServiceException(
+                    "Microsoft Graph file download failed.",
+                    statusCode:
+                        (int)response.StatusCode);
+            }
+            finally
+            {
+                response.Dispose();
+            }
+        }
+
+        try
+        {
+            var stream =
+                await response.Content
+                    .ReadAsStreamAsync(
+                        context.CancellationToken);
+
+            var contentType =
+                response.Content.Headers
+                    .ContentType
+                    ?.MediaType;
+
+            if (string.IsNullOrWhiteSpace(
+                    contentType))
+            {
+                await stream.DisposeAsync();
+
+                throw new GraphServiceException(
+                    "Microsoft Graph returned file content without a content type.",
+                    statusCode:
+                        (int)response.StatusCode);
+            }
+
+            var contentLength =
+                response.Content.Headers
+                    .ContentLength;
+
+            var eTag =
+                response.Headers.ETag?.Tag ??
+                GetFirstHeaderValue(
+                    response,
+                    "ETag");
+
+            var fileName =
+                GetResponseFileName(
+                    response);
+
+            var lastModified =
+                response.Content.Headers
+                    .LastModified;
+
+            return new GraphFileContent(
+                stream,
+                contentType,
+                contentLength,
+                eTag,
+                fileName,
+                lastModified,
+                response);
+        }
+        catch
+        {
+            response.Dispose();
+            throw;
+        }
     }
 
     private async Task<HttpResponseMessage> SendGetAsync(
         Uri requestUri,
-        GraphRequestContext context)
+        GraphRequestContext context,
+        string acceptMediaType)
     {
+        if (string.IsNullOrWhiteSpace(
+                acceptMediaType))
+        {
+            throw new ArgumentException(
+                "An accepted media type is required.",
+                nameof(acceptMediaType));
+        }
+
         var accessToken =
-            await _tokenProvider.GetAccessTokenAsync(
-                _options.Scopes,
-                context.CancellationToken);
+            await _tokenProvider
+                .GetAccessTokenAsync(
+                    _options.Scopes,
+                    context.CancellationToken);
+
+        if (string.IsNullOrWhiteSpace(
+                accessToken))
+        {
+            throw new GraphServiceException(
+                "The Microsoft Graph access token is missing.");
+        }
 
         var attempts = 0;
 
         while (true)
         {
+            context.CancellationToken
+                .ThrowIfCancellationRequested();
+
             attempts++;
 
             using var request =
@@ -132,34 +282,45 @@ public sealed class PortalGraphClient : IPortalGraphClient
 
             request.Headers.Accept.Add(
                 new MediaTypeWithQualityHeaderValue(
-                    "application/json"));
+                    acceptMediaType));
 
-            request.Headers.TryAddWithoutValidation(
-                "client-request-id",
-                context.CorrelationId);
+            if (!string.IsNullOrWhiteSpace(
+                    context.CorrelationId))
+            {
+                request.Headers
+                    .TryAddWithoutValidation(
+                        "client-request-id",
+                        context.CorrelationId);
+            }
 
-            request.Headers.TryAddWithoutValidation(
-                "return-client-request-id",
-                "true");
+            request.Headers
+                .TryAddWithoutValidation(
+                    "return-client-request-id",
+                    "true");
 
             var client =
                 _httpClientFactory.CreateClient(
                     ClientName);
 
-            var response = await client.SendAsync(
-                request,
-                HttpCompletionOption.ResponseHeadersRead,
-                context.CancellationToken);
+            var response =
+                await client.SendAsync(
+                    request,
+                    HttpCompletionOption
+                        .ResponseHeadersRead,
+                    context.CancellationToken);
 
-            if (!IsTransient(response.StatusCode) ||
-                attempts > _options.MaximumRetryAttempts)
+            if (!IsTransient(
+                    response.StatusCode) ||
+                attempts >
+                _options.MaximumRetryAttempts)
             {
                 return response;
             }
 
-            var delay = GetRetryDelay(
-                response,
-                attempts);
+            var delay =
+                GetRetryDelay(
+                    response,
+                    attempts);
 
             _logger.LogWarning(
                 "Microsoft Graph request returned status {StatusCode}. Retrying after {DelayMilliseconds} milliseconds. Attempt {Attempt}.",
@@ -175,9 +336,11 @@ public sealed class PortalGraphClient : IPortalGraphClient
         }
     }
 
-    private Uri CreateRequestUri(string relativePath)
+    private Uri CreateRequestUri(
+        string relativePath)
     {
-        if (string.IsNullOrWhiteSpace(relativePath))
+        if (string.IsNullOrWhiteSpace(
+                relativePath))
         {
             throw new ArgumentException(
                 "A Microsoft Graph request path is required.",
@@ -197,7 +360,8 @@ public sealed class PortalGraphClient : IPortalGraphClient
                     absoluteUri.Host,
                     _baseUri.Host,
                     StringComparison.OrdinalIgnoreCase) ||
-                absoluteUri.Port != _baseUri.Port)
+                absoluteUri.Port !=
+                _baseUri.Port)
             {
                 throw new ArgumentException(
                     "The Microsoft Graph continuation URL has an unexpected origin.",
@@ -243,9 +407,11 @@ public sealed class PortalGraphClient : IPortalGraphClient
         if (retryAfter?.Date is DateTimeOffset date)
         {
             var calculatedDelay =
-                date - DateTimeOffset.UtcNow;
+                date -
+                DateTimeOffset.UtcNow;
 
-            if (calculatedDelay > TimeSpan.Zero)
+            if (calculatedDelay >
+                TimeSpan.Zero)
             {
                 return calculatedDelay;
             }
@@ -253,10 +419,13 @@ public sealed class PortalGraphClient : IPortalGraphClient
 
         var seconds =
             Math.Min(
-                Math.Pow(2, attempt - 1),
+                Math.Pow(
+                    2,
+                    attempt - 1),
                 8);
 
-        return TimeSpan.FromSeconds(seconds);
+        return TimeSpan.FromSeconds(
+            seconds);
     }
 
     private static async Task EnsureSuccessAsync(
@@ -268,35 +437,46 @@ public sealed class PortalGraphClient : IPortalGraphClient
             return;
         }
 
-        GraphErrorEnvelope? envelope = null;
+        GraphErrorEnvelope? envelope =
+            null;
 
         try
         {
             await using var stream =
-                await response.Content.ReadAsStreamAsync(
-                    cancellationToken);
+                await response.Content
+                    .ReadAsStreamAsync(
+                        cancellationToken);
 
             envelope =
-                await JsonSerializer.DeserializeAsync<
-                    GraphErrorEnvelope>(
-                    stream,
-                    JsonOptions,
-                    cancellationToken);
+                await JsonSerializer
+                    .DeserializeAsync<
+                        GraphErrorEnvelope>(
+                        stream,
+                        JsonOptions,
+                        cancellationToken);
         }
         catch (JsonException)
         {
-            // The response did not contain a Graph error envelope.
+            // The response was not a Graph JSON error envelope.
+        }
+        catch (NotSupportedException)
+        {
+            // The response could not be deserialized as JSON.
         }
 
         var retryAfter =
-            GetResponseRetryAfter(response);
+            GetResponseRetryAfter(
+                response);
 
         throw new GraphServiceException(
             envelope?.Error?.Message ??
             "Microsoft Graph request failed.",
-            statusCode: (int)response.StatusCode,
-            errorCode: envelope?.Error?.Code,
-            retryAfter: retryAfter);
+            statusCode:
+                (int)response.StatusCode,
+            errorCode:
+                envelope?.Error?.Code,
+            retryAfter:
+                retryAfter);
     }
 
     private static TimeSpan? GetResponseRetryAfter(
@@ -311,23 +491,69 @@ public sealed class PortalGraphClient : IPortalGraphClient
             return delta;
         }
 
-        if (retryAfter?.Date is not DateTimeOffset date)
+        if (retryAfter?.Date is not
+            DateTimeOffset date)
         {
             return null;
         }
 
         var calculatedDelay =
-            date - DateTimeOffset.UtcNow;
+            date -
+            DateTimeOffset.UtcNow;
 
-        return calculatedDelay > TimeSpan.Zero
+        return calculatedDelay >
+               TimeSpan.Zero
             ? calculatedDelay
             : null;
+    }
+
+    private static string? GetResponseFileName(
+        HttpResponseMessage response)
+    {
+        var contentDisposition =
+            response.Content.Headers
+                .ContentDisposition;
+
+        var fileName =
+            contentDisposition?.FileNameStar ??
+            contentDisposition?.FileName;
+
+        if (string.IsNullOrWhiteSpace(
+                fileName))
+        {
+            return null;
+        }
+
+        var normalizedFileName =
+            fileName
+                .Trim()
+                .Trim('"');
+
+        return string.IsNullOrWhiteSpace(
+                normalizedFileName)
+            ? null
+            : normalizedFileName;
+    }
+
+    private static string? GetFirstHeaderValue(
+        HttpResponseMessage response,
+        string headerName)
+    {
+        if (!response.Headers.TryGetValues(
+                headerName,
+                out var values))
+        {
+            return null;
+        }
+
+        return values.FirstOrDefault();
     }
 
     private static string EnsureTrailingSlash(
         string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(
+                value))
         {
             throw new ArgumentException(
                 "The Microsoft Graph base URL is required.",
