@@ -214,6 +214,7 @@ class PortalDialog extends StatelessWidget {
             ).textTheme.bodyMedium?.copyWith(color: PortalColors.textSecondary),
           ),
         if (_hasDescription && content != null) const SizedBox(height: PortalSpacing.md),
+        // ignore: use_null_aware_elements
         if (content != null) content!,
       ],
     );
