@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using PortalApp.Api.Authorization;
 using PortalApp.Api.Features.Leave;
+using PortalApp.Api.FileSecurity;
+using Microsoft.Extensions.Options;
 using PortalApp.Api.Features.Payroll;
 using PortalApp.Infrastructure.Graph;
 using PortalApp.Infrastructure.SharePoint.Payroll;
@@ -15,7 +17,7 @@ public sealed class PayrollDocumentServiceTests
     {
         var user = new TestUser("employee-001", "object-001");
         var repository = new FakeRepository();
-        var service = new PayrollDocumentService(user, new CurrentEmployeeIdentifierResolver(), repository);
+        var service = new PayrollDocumentService(user, new CurrentEmployeeIdentifierResolver(), repository, CreateValidator());
 
         var result = await service.GetCurrentAsync(2026, 8, "correlation-001", CancellationToken.None);
 
@@ -28,10 +30,13 @@ public sealed class PayrollDocumentServiceTests
     [Fact]
     public async Task RejectsPartialPeriod()
     {
-        var service = new PayrollDocumentService(new TestUser("employee-001", "object-001"), new CurrentEmployeeIdentifierResolver(), new FakeRepository());
+        var service = new PayrollDocumentService(new TestUser("employee-001", "object-001"), new CurrentEmployeeIdentifierResolver(), new FakeRepository(), CreateValidator());
         await Assert.ThrowsAsync<ArgumentException>(() => service.GetCurrentAsync(2026, null, "correlation-001", CancellationToken.None));
     }
 
+    private static IFileSecurityValidator CreateValidator() =>
+        new FileSecurityValidator(
+            Options.Create(new FileSecurityOptions()));
     private sealed class FakeRepository : IPayrollDocumentRepository
     {
         public string? EmployeeId { get; private set; }

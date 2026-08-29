@@ -1,5 +1,6 @@
 using PortalApp.Api.Authorization;
 using PortalApp.Api.Features.Leave;
+using PortalApp.Api.FileSecurity;
 using PortalApp.Infrastructure.Graph;
 using PortalApp.Infrastructure.SharePoint.Payroll;
 
@@ -10,15 +11,18 @@ public sealed class PayrollDocumentService : IPayrollDocumentService
     private readonly ICurrentUser _currentUser;
     private readonly CurrentEmployeeIdentifierResolver _employeeResolver;
     private readonly IPayrollDocumentRepository _repository;
+    private readonly IFileSecurityValidator _fileSecurityValidator;
 
     public PayrollDocumentService(
         ICurrentUser currentUser,
         CurrentEmployeeIdentifierResolver employeeResolver,
-        IPayrollDocumentRepository repository)
+        IPayrollDocumentRepository repository,
+        IFileSecurityValidator fileSecurityValidator)
     {
         _currentUser = currentUser;
         _employeeResolver = employeeResolver;
         _repository = repository;
+        _fileSecurityValidator = fileSecurityValidator;
     }
 
     public async Task<PayrollDocumentsResponse> GetCurrentAsync(
@@ -59,13 +63,26 @@ public sealed class PayrollDocumentService : IPayrollDocumentService
             return null;
         }
 
-        return new PayrollDownload(
-            file.Content,
-            file.ContentType,
-            file.FileName ?? "payroll-document.pdf",
-            file.ContentLength,
-            file.ETag,
-            file);
+        try
+        {
+            var safeFileName = await _fileSecurityValidator.ValidateDownloadAsync(
+                file,
+                "payroll-document.pdf",
+                cancellationToken);
+
+            return new PayrollDownload(
+                file.Content,
+                file.ContentType,
+                safeFileName,
+                file.ContentLength,
+                file.ETag,
+                file);
+        }
+        catch
+        {
+            await file.DisposeAsync();
+            throw;
+        }
     }
 
     private static PayrollPeriod? CreateOptionalPeriod(int? year, int? month)

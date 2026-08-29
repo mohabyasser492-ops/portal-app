@@ -53,6 +53,12 @@ public sealed class PayrollDocumentsController : ControllerBase
         }
 
         Response.RegisterForDisposeAsync(download);
+        Response.Headers.CacheControl = "no-store, private";
+        Response.Headers.Pragma = "no-cache";
+        Response.Headers["X-Content-Type-Options"] = "nosniff";
+        Response.Headers["Content-Security-Policy"] = "sandbox; default-src 'none'";
+        Response.Headers["Cross-Origin-Resource-Policy"] = "same-origin";
+        Response.Headers["X-Download-Options"] = "noopen";
         if (download.ContentLength.HasValue)
         {
             Response.ContentLength = download.ContentLength.Value;
