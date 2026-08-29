@@ -2,7 +2,7 @@ import 'package:portal_app/features/authentication/domain/authentication_reposit
 import 'package:portal_app/features/authentication/domain/portal_user.dart';
 
 /// In-memory authentication repository used by tests.
-final class FakeAuthenticationRepository implements AuthenticationRepository {
+class FakeAuthenticationRepository implements AuthenticationRepository {
   FakeAuthenticationRepository({
     this.restoredUser,
     this.signedInUser = const PortalUser(
