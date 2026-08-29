@@ -1,5 +1,7 @@
+using PortalApp.Api.Features.Attendance;
 using PortalApp.Api.Features.Leave;
 using PortalApp.Infrastructure.SharePoint;
+using PortalApp.Infrastructure.SharePoint.Attendance;
 using PortalApp.Infrastructure.SharePoint.Leave;
 
 namespace PortalApp.Api.Configuration;
@@ -17,7 +19,8 @@ public static class SharePointExtensions
                 configuration.GetSection(
                     SharePointOptions.SectionName))
             .Validate(
-                options => options.IsConfigured,
+                options =>
+                    options.IsConfigured,
                 "The SharePoint configuration is incomplete.")
             .ValidateOnStart();
 
@@ -34,6 +37,17 @@ public static class SharePointExtensions
         services.AddScoped<
             ILeaveBalanceService,
             LeaveBalanceService>();
+
+        services.AddSingleton<
+            AttendanceMapper>();
+
+        services.AddScoped<
+            IAttendanceRepository,
+            AttendanceRepository>();
+
+        services.AddScoped<
+            IAttendanceService,
+            AttendanceService>();
 
         return services;
     }
