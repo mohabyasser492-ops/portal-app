@@ -9,4 +9,8 @@ public interface IPortalGraphClient
     Task<T?> GetAsync<T>(
         string relativePath,
         GraphRequestContext context);
+
+    Task<GraphFileContent> DownloadAsync(
+        string relativePath,
+        GraphRequestContext context);
 }

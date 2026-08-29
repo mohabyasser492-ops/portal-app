@@ -1,8 +1,10 @@
 using PortalApp.Api.Features.Attendance;
 using PortalApp.Api.Features.Leave;
+using PortalApp.Api.Features.Payroll;
 using PortalApp.Infrastructure.SharePoint;
 using PortalApp.Infrastructure.SharePoint.Attendance;
 using PortalApp.Infrastructure.SharePoint.Leave;
+using PortalApp.Infrastructure.SharePoint.Payroll;
 
 namespace PortalApp.Api.Configuration;
 
@@ -49,6 +51,16 @@ public static class SharePointExtensions
             IAttendanceService,
             AttendanceService>();
 
+
+        services.AddSingleton<PayrollDocumentMapper>();
+
+        services.AddScoped<
+            IPayrollDocumentRepository,
+            PayrollDocumentRepository>();
+
+        services.AddScoped<
+            IPayrollDocumentService,
+            PayrollDocumentService>();
         return services;
     }
 }
