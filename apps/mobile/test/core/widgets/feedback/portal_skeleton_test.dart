@@ -150,22 +150,46 @@ void main() {
 
     testWidgets('can change from animated to static', (tester) async {
       await tester.pumpWidget(
-        _buildTestApp(const PortalSkeleton(width: 160, height: 24)),
+        _buildTestApp(
+          const PortalSkeleton(
+            key: ValueKey<String>('skeleton'),
+            width: 160,
+            height: 24,
+          ),
+        ),
       );
 
-      expect(find.byType(AnimatedBuilder), findsOneWidget);
+      final animatedFinder = find.descendant(
+        of: find.byKey(const ValueKey<String>('skeleton')),
+        matching: find.byType(AnimatedBuilder),
+      );
+
+      expect(animatedFinder, findsOneWidget);
 
       await tester.pumpWidget(
         _buildTestApp(
-          const PortalSkeleton(width: 160, height: 24, animate: false),
+          const PortalSkeleton(
+            key: ValueKey<String>('skeleton'),
+            width: 160,
+            height: 24,
+            animate: false,
+          ),
         ),
       );
 
       await tester.pump();
 
-      expect(find.byType(AnimatedBuilder), findsNothing);
+      final updatedAnimatedFinder = find.descendant(
+        of: find.byKey(const ValueKey<String>('skeleton')),
+        matching: find.byType(AnimatedBuilder),
+      );
+
+      expect(updatedAnimatedFinder, findsNothing);
 
       expect(tester.takeException(), isNull);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump();
     });
 
     testWidgets('is excluded from accessibility semantics', (tester) async {

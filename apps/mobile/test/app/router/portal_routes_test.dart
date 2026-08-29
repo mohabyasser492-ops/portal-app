@@ -11,10 +11,12 @@ void main() {
         PortalRouteNames.requests,
         PortalRouteNames.profile,
         PortalRouteNames.designSystem,
+        PortalRouteNames.signIn,
+        PortalRouteNames.authenticationLoading,
         PortalRouteNames.notFound,
       };
 
-      expect(names.length, 6);
+      expect(names.length, 8);
     });
 
     test('uses non-empty route names', () {
@@ -24,6 +26,8 @@ void main() {
         PortalRouteNames.requests,
         PortalRouteNames.profile,
         PortalRouteNames.designSystem,
+        PortalRouteNames.signIn,
+        PortalRouteNames.authenticationLoading,
         PortalRouteNames.notFound,
       ];
 
@@ -39,10 +43,12 @@ void main() {
         PortalRoutePaths.requests,
         PortalRoutePaths.profile,
         PortalRoutePaths.designSystem,
+        PortalRoutePaths.signIn,
+        PortalRoutePaths.authenticationLoading,
         PortalRoutePaths.notFound,
       };
 
-      expect(paths.length, 6);
+      expect(paths.length, 8);
     });
 
     test('starts every route path with a slash', () {
@@ -52,14 +58,27 @@ void main() {
         PortalRoutePaths.requests,
         PortalRoutePaths.profile,
         PortalRoutePaths.designSystem,
+        PortalRoutePaths.signIn,
+        PortalRoutePaths.authenticationLoading,
         PortalRoutePaths.notFound,
       ];
 
       expect(paths.every((path) => path.startsWith('/')), isTrue);
     });
 
-    test('uses the root path for home', () {
+    test('uses the root path for Home', () {
       expect(PortalRoutePaths.home, '/');
+    });
+
+    test('defines separate authentication paths', () {
+      expect(PortalRoutePaths.signIn, '/sign-in');
+
+      expect(PortalRoutePaths.authenticationLoading, '/auth-loading');
+
+      expect(
+        PortalRoutePaths.signIn,
+        isNot(PortalRoutePaths.authenticationLoading),
+      );
     });
   });
 }

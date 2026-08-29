@@ -11,11 +11,24 @@ import 'package:portal_app/features/not_found/presentation/not_found_page.dart';
 import 'package:portal_app/features/profile/presentation/profile_placeholder_page.dart';
 import 'package:portal_app/features/requests/presentation/requests_placeholder_page.dart';
 import 'package:portal_app/features/services/presentation/services_placeholder_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portal_app/app/router/authentication_router_refresh_notifier.dart';
+import 'package:portal_app/features/authentication/application/authentication_state.dart';
+import 'package:portal_app/features/authentication/domain/portal_user.dart';
 
 void main() {
+  const authenticatedUser = PortalUser(
+    id: 'test-user',
+    displayName: 'Test Employee',
+    email: 'test@example.invalid',
+  );
   group('PortalRouter', () {
     testWidgets('starts on the Home route', (tester) async {
-      final router = createPortalRouter();
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(refreshNotifier: refreshNotifier);
 
       await tester.pumpWidget(_buildTestApp(router));
 
@@ -34,8 +47,13 @@ void main() {
     });
 
     testWidgets('starts at a supplied initial location', (tester) async {
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
       final router = createPortalRouter(
         initialLocation: PortalRoutePaths.services,
+        refreshNotifier: refreshNotifier,
       );
 
       await tester.pumpWidget(_buildTestApp(router));
@@ -55,30 +73,54 @@ void main() {
     testWidgets('navigates to Services from the navigation bar', (
       tester,
     ) async {
-      final router = createPortalRouter();
+      await _setTestViewport(tester, const Size(390, 844));
 
-      await tester.pumpWidget(_buildTestApp(router));
+      final bundle = _createSignedInRouter();
+
+      await tester.pumpWidget(_buildTestApp(bundle.router));
 
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Services'));
+      final navigationBarFinder = find.byType(NavigationBar);
+
+      expect(navigationBarFinder, findsOneWidget);
+
+      expect(find.byType(NavigationRail), findsNothing);
+
+      final servicesDestinationFinder = find.descendant(
+        of: navigationBarFinder,
+        matching: find.text('Services'),
+      );
+
+      expect(servicesDestinationFinder, findsOneWidget);
+
+      await tester.tap(servicesDestinationFinder);
 
       await tester.pumpAndSettle();
 
       expect(find.byType(ServicesPlaceholderPage), findsOneWidget);
 
       expect(
-        router.routeInformationProvider.value.uri.path,
+        bundle.router.routeInformationProvider.value.uri.path,
         PortalRoutePaths.services,
       );
 
-      router.dispose();
+      expect(tester.takeException(), isNull);
+
+      await bundle.dispose(tester);
     });
 
     testWidgets('navigates to Requests from the navigation bar', (
       tester,
     ) async {
-      final router = createPortalRouter();
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(
+        initialLocation: PortalRoutePaths.services,
+        refreshNotifier: refreshNotifier,
+      );
 
       await tester.pumpWidget(_buildTestApp(router));
 
@@ -99,7 +141,14 @@ void main() {
     });
 
     testWidgets('navigates to Profile from the navigation bar', (tester) async {
-      final router = createPortalRouter();
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(
+        initialLocation: PortalRoutePaths.services,
+        refreshNotifier: refreshNotifier,
+      );
 
       await tester.pumpWidget(_buildTestApp(router));
 
@@ -120,7 +169,14 @@ void main() {
     });
 
     testWidgets('supports navigation by route name', (tester) async {
-      final router = createPortalRouter();
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(
+        initialLocation: PortalRoutePaths.services,
+        refreshNotifier: refreshNotifier,
+      );
 
       await tester.pumpWidget(_buildTestApp(router));
 
@@ -143,9 +199,9 @@ void main() {
     testWidgets('shows the not-found page for an unknown route', (
       tester,
     ) async {
-      final router = createPortalRouter(initialLocation: '/unknown-page');
+      final bundle = _createSignedInRouter(initialLocation: '/unknown-page');
 
-      await tester.pumpWidget(_buildTestApp(router));
+      await tester.pumpWidget(_buildTestApp(bundle.router));
 
       await tester.pumpAndSettle();
 
@@ -153,13 +209,27 @@ void main() {
 
       expect(find.text('Page not found'), findsWidgets);
 
-      expect(find.textContaining('/unknown-page'), findsOneWidget);
+      expect(find.text('Return home'), findsOneWidget);
 
-      router.dispose();
+      expect(
+        bundle.router.routeInformationProvider.value.uri.path,
+        '/unknown-page',
+      );
+
+      expect(tester.takeException(), isNull);
+
+      await bundle.dispose(tester);
     });
 
     testWidgets('returns home from the not-found page', (tester) async {
-      final router = createPortalRouter(initialLocation: '/unknown-page');
+      final refreshNotifier = AuthenticationRouterRefreshNotifier(
+        initialState: const AuthenticationState.signedIn(authenticatedUser),
+      );
+
+      final router = createPortalRouter(
+        initialLocation: '/unknown-route',
+        refreshNotifier: refreshNotifier,
+      );
 
       await tester.pumpWidget(_buildTestApp(router));
 
@@ -178,15 +248,75 @@ void main() {
         PortalRoutePaths.home,
       );
 
+      await tester.pumpWidget(const SizedBox.shrink());
+
+      await tester.pump();
+
       router.dispose();
+      refreshNotifier.dispose();
     });
   });
 }
 
+Future<void> _setTestViewport(WidgetTester tester, Size size) async {
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = size;
+
+  addTearDown(() {
+    tester.view.resetDevicePixelRatio();
+    tester.view.resetPhysicalSize();
+  });
+
+  await tester.pump();
+}
+
+_TestRouterBundle _createSignedInRouter({
+  String initialLocation = PortalRoutePaths.home,
+}) {
+  const authenticatedUser = PortalUser(
+    id: 'test-user',
+    displayName: 'Test Employee',
+    email: 'test@example.invalid',
+  );
+
+  final refreshNotifier = AuthenticationRouterRefreshNotifier(
+    initialState: const AuthenticationState.signedIn(authenticatedUser),
+  );
+
+  final router = createPortalRouter(
+    initialLocation: initialLocation,
+    refreshNotifier: refreshNotifier,
+  );
+
+  return _TestRouterBundle(router: router, refreshNotifier: refreshNotifier);
+}
+
+final class _TestRouterBundle {
+  const _TestRouterBundle({
+    required this.router,
+    required this.refreshNotifier,
+  });
+
+  final GoRouter router;
+
+  final AuthenticationRouterRefreshNotifier refreshNotifier;
+
+  Future<void> dispose(WidgetTester tester) async {
+    await tester.pumpWidget(const SizedBox.shrink());
+
+    await tester.pump();
+
+    router.dispose();
+    refreshNotifier.dispose();
+  }
+}
+
 Widget _buildTestApp(GoRouter router) {
-  return MaterialApp.router(
-    title: 'Portal App Router Test',
-    theme: PortalTheme.light,
-    routerConfig: router,
+  return ProviderScope(
+    child: MaterialApp.router(
+      title: 'Portal App Router Test',
+      theme: PortalTheme.light,
+      routerConfig: router,
+    ),
   );
 }

@@ -1,27 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../app/router/portal_route_names.dart';
 import '../../../app/theme/portal_design_system.dart';
+import '../../../features/authentication/application/authentication_controller.dart';
 
-/// The number of primary destinations displayed by the navigation shell.
+/// Number of primary destinations displayed by the navigation shell.
 const int portalNavigationDestinationCount = 4;
 
-/// The viewport width at which the shell switches from bottom navigation
+/// Screen width at which the navigation shell changes from bottom navigation
 /// to a navigation rail.
 const double portalNavigationRailBreakpoint = 720;
 
-/// The primary application destinations.
+/// Primary destinations available in Portal App.
 ///
-/// The order of this enum must remain synchronized with the order of
-/// destinations rendered by [PortalNavigationShell].
+/// The order must remain synchronized with:
+///
+/// - GoRouter stateful branches
+/// - NavigationBar destinations
+/// - NavigationRail destinations
 enum PortalNavigationDestination { home, services, requests, profile }
 
-/// A responsive application shell for Portal App.
+/// Responsive navigation shell used by the authenticated application.
 ///
-/// Compact viewports use a bottom [NavigationBar]. Wider viewports use a
-/// [NavigationRail]. The shell receives its current destination and navigation
-/// callback from the routing layer, which keeps this widget independent from
-/// a specific router implementation.
-class PortalNavigationShell extends StatelessWidget {
+/// Compact screens use a bottom [NavigationBar].
+/// Wide screens use a [NavigationRail].
+///
+/// The application bar provides actions for:
+///
+/// - Opening the design-system preview
+/// - Signing out of the authenticated session
+class PortalNavigationShell extends ConsumerWidget {
   const PortalNavigationShell({
     required this.currentIndex,
     required this.onDestinationSelected,
@@ -33,27 +43,53 @@ class PortalNavigationShell extends StatelessWidget {
          'currentIndex must reference a valid navigation destination.',
        );
 
-  /// The index of the currently selected destination.
+  /// Index of the currently selected destination.
   final int currentIndex;
 
-  /// Called when the user selects a navigation destination.
+  /// Called when the user selects a different destination.
   final ValueChanged<int> onDestinationSelected;
 
-  /// The active route content.
+  /// Active route content displayed inside the navigation shell.
   final Widget child;
 
-  /// Whether the shell should display its shared application bar.
+  /// Whether the shared application bar is displayed.
   final bool showAppBar;
 
   @override
-  Widget build(BuildContext context) {
-    final useNavigationRail =
-        MediaQuery.sizeOf(context).width >= portalNavigationRailBreakpoint;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final width = MediaQuery.sizeOf(context).width;
+
+    final useNavigationRail = width >= portalNavigationRailBreakpoint;
 
     return Scaffold(
-      appBar: showAppBar ? AppBar(title: const Text('Portal App')) : null,
+      appBar: showAppBar ? _buildAppBar(context: context, ref: ref) : null,
       body: useNavigationRail ? _buildWideLayout() : child,
       bottomNavigationBar: useNavigationRail ? null : _buildNavigationBar(),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar({
+    required BuildContext context,
+    required WidgetRef ref,
+  }) {
+    return AppBar(
+      title: const Text('Portal App'),
+      actions: [
+        IconButton(
+          tooltip: 'Open design system',
+          onPressed: () {
+            context.pushNamed(PortalRouteNames.designSystem);
+          },
+          icon: const Icon(Icons.palette_outlined),
+        ),
+        IconButton(
+          tooltip: 'Sign out',
+          onPressed: () {
+            ref.read(authenticationControllerProvider.notifier).signOut();
+          },
+          icon: const Icon(Icons.logout_outlined),
+        ),
+      ],
     );
   }
 
@@ -63,7 +99,7 @@ class PortalNavigationShell extends StatelessWidget {
         SafeArea(
           child: NavigationRail(
             selectedIndex: currentIndex,
-            onDestinationSelected: _selectDestination,
+            onDestinationSelected: _handleDestinationSelection,
             labelType: NavigationRailLabelType.all,
             groupAlignment: -1,
             destinations: const [
@@ -103,7 +139,7 @@ class PortalNavigationShell extends StatelessWidget {
   Widget _buildNavigationBar() {
     return NavigationBar(
       selectedIndex: currentIndex,
-      onDestinationSelected: _selectDestination,
+      onDestinationSelected: _handleDestinationSelection,
       destinations: const [
         NavigationDestination(
           icon: Icon(Icons.home_outlined),
@@ -129,8 +165,12 @@ class PortalNavigationShell extends StatelessWidget {
     );
   }
 
-  void _selectDestination(int index) {
+  void _handleDestinationSelection(int index) {
     if (index == currentIndex) {
+      return;
+    }
+
+    if (index < 0 || index >= portalNavigationDestinationCount) {
       return;
     }
 

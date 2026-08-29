@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:portal_app/app/theme/portal_design_system.dart';
 import 'package:portal_app/core/widgets/navigation/portal_navigation_shell.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
   group('PortalNavigationShell', () {
@@ -335,11 +336,13 @@ Widget _buildTestApp(
   TextDirection textDirection = TextDirection.ltr,
   TextScaler textScaler = TextScaler.noScaling,
 }) {
-  return MaterialApp(
-    theme: PortalTheme.light,
-    home: MediaQuery(
-      data: MediaQueryData(size: size, textScaler: textScaler),
-      child: Directionality(textDirection: textDirection, child: child),
+  return ProviderScope(
+    child: MaterialApp(
+      theme: PortalTheme.light,
+      home: MediaQuery(
+        data: MediaQueryData(size: size, textScaler: textScaler),
+        child: Directionality(textDirection: textDirection, child: child),
+      ),
     ),
   );
 }
