@@ -75,12 +75,12 @@ public sealed class LeaveBalanceMapper
                 LeaveBalanceFields.BalanceYear) ??
             DateTimeOffset.UtcNow.Year;
 
-        if (balanceYear is < 2000 or > 2200)
+        if (balanceYear < 1)
         {
             throw new SharePointMappingException(
                 item.Id,
                 LeaveBalanceFields.BalanceYear,
-                "The leave balance year is outside the supported range.");
+                "The leave balance year must be positive.");
         }
 
         return new LeaveBalanceRecord(
