@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\..\src\PortalApp.Infrastructure\PortalApp.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\PortalApp.Api\PortalApp.Api.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4">
