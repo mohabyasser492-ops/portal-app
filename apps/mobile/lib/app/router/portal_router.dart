@@ -5,9 +5,9 @@ import '../../core/widgets/navigation/portal_navigation_shell.dart';
 import '../../features/authentication/presentation/authentication_loading_page.dart';
 import '../../features/authentication/presentation/sign_in_route_page.dart';
 import '../../features/design_system/presentation/design_system_preview_page.dart';
-import '../../features/home/presentation/home_placeholder_page.dart';
+import '../../features/home/presentation/home_page.dart';
 import '../../features/not_found/presentation/not_found_page.dart';
-import '../../features/profile/presentation/profile_placeholder_page.dart';
+import '../../features/profile/presentation/profile_page.dart';
 import '../../features/requests/presentation/requests_placeholder_page.dart';
 import '../../features/services/presentation/services_placeholder_page.dart';
 import 'authentication_redirect_guard.dart';
@@ -99,7 +99,7 @@ GoRouter createPortalRouter({
                 path: PortalRoutePaths.home,
                 name: PortalRouteNames.home,
                 builder: (context, state) {
-                  return const HomePlaceholderPage();
+                  return const HomePage();
                 },
               ),
             ],
@@ -135,7 +135,7 @@ GoRouter createPortalRouter({
                 path: PortalRoutePaths.profile,
                 name: PortalRouteNames.profile,
                 builder: (context, state) {
-                  return const ProfilePlaceholderPage();
+                  return const ProfilePage();
                 },
               ),
             ],

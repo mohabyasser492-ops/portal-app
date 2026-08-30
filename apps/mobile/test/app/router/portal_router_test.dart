@@ -6,15 +6,19 @@ import 'package:portal_app/app/router/portal_route_paths.dart';
 import 'package:portal_app/app/router/portal_router.dart';
 import 'package:portal_app/app/theme/portal_design_system.dart';
 import 'package:portal_app/core/widgets/navigation/portal_navigation_shell.dart';
-import 'package:portal_app/features/home/presentation/home_placeholder_page.dart';
+import 'package:portal_app/features/home/presentation/home_page.dart';
 import 'package:portal_app/features/not_found/presentation/not_found_page.dart';
-import 'package:portal_app/features/profile/presentation/profile_placeholder_page.dart';
+import 'package:portal_app/features/profile/presentation/profile_page.dart';
 import 'package:portal_app/features/requests/presentation/requests_placeholder_page.dart';
 import 'package:portal_app/features/services/presentation/services_placeholder_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portal_app/app/router/authentication_router_refresh_notifier.dart';
 import 'package:portal_app/features/authentication/application/authentication_state.dart';
 import 'package:portal_app/features/authentication/domain/portal_user.dart';
+import 'package:portal_app/features/home/application/home_providers.dart';
+import 'package:portal_app/features/home/data/fake_home_repository.dart';
+import 'package:portal_app/features/profile/application/profile_providers.dart';
+import 'package:portal_app/features/profile/data/fake_profile_repository.dart';
 
 void main() {
   const authenticatedUser = PortalUser(
@@ -34,7 +38,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(HomePlaceholderPage), findsOneWidget);
+      expect(find.byType(HomePage), findsOneWidget);
 
       expect(find.byType(PortalNavigationShell), findsOneWidget);
 
@@ -158,7 +162,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(ProfilePlaceholderPage), findsOneWidget);
+      expect(find.byType(ProfilePage), findsOneWidget);
 
       expect(
         router.routeInformationProvider.value.uri.path,
@@ -241,7 +245,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(HomePlaceholderPage), findsOneWidget);
+      expect(find.byType(HomePage), findsOneWidget);
 
       expect(
         router.routeInformationProvider.value.uri.path,
@@ -313,6 +317,14 @@ final class _TestRouterBundle {
 
 Widget _buildTestApp(GoRouter router) {
   return ProviderScope(
+    overrides: [
+      homeRepositoryProvider.overrideWithValue(
+        FakeHomeRepository(operationDelay: Duration.zero),
+      ),
+      profileRepositoryProvider.overrideWithValue(
+        FakeProfileRepository(operationDelay: Duration.zero),
+      ),
+    ],
     child: MaterialApp.router(
       title: 'Portal App Router Test',
       theme: PortalTheme.light,
