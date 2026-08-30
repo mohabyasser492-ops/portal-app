@@ -4,7 +4,7 @@ import 'package:portal_app/app/theme/portal_design_system.dart';
 import 'package:portal_app/core/widgets/cards/portal_card.dart';
 import 'package:portal_app/core/widgets/navigation/portal_destination_placeholder.dart';
 import 'package:portal_app/features/home/presentation/home_placeholder_page.dart';
-import 'package:portal_app/features/profile/presentation/profile_placeholder_page.dart';
+
 import 'package:portal_app/features/requests/presentation/requests_placeholder_page.dart';
 import 'package:portal_app/features/services/presentation/services_placeholder_page.dart';
 
@@ -146,13 +146,7 @@ void main() {
       expect(find.byIcon(Icons.description_outlined), findsOneWidget);
     });
 
-    testWidgets('renders the Profile destination', (tester) async {
-      await tester.pumpWidget(_buildTestApp(const ProfilePlaceholderPage()));
 
-      expect(find.text('Profile'), findsOneWidget);
-      expect(find.text('/profile'), findsOneWidget);
-      expect(find.byIcon(Icons.person_outline), findsOneWidget);
-    });
   });
 }
 

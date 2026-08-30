@@ -8,7 +8,7 @@ import 'package:portal_app/app/theme/portal_design_system.dart';
 import 'package:portal_app/core/widgets/navigation/portal_navigation_shell.dart';
 import 'package:portal_app/features/home/presentation/home_page.dart';
 import 'package:portal_app/features/not_found/presentation/not_found_page.dart';
-import 'package:portal_app/features/profile/presentation/profile_placeholder_page.dart';
+import 'package:portal_app/features/profile/presentation/profile_page.dart';
 import 'package:portal_app/features/requests/presentation/requests_placeholder_page.dart';
 import 'package:portal_app/features/services/presentation/services_placeholder_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +17,8 @@ import 'package:portal_app/features/authentication/application/authentication_st
 import 'package:portal_app/features/authentication/domain/portal_user.dart';
 import 'package:portal_app/features/home/application/home_providers.dart';
 import 'package:portal_app/features/home/data/fake_home_repository.dart';
+import 'package:portal_app/features/profile/application/profile_providers.dart';
+import 'package:portal_app/features/profile/data/fake_profile_repository.dart';
 
 void main() {
   const authenticatedUser = PortalUser(
@@ -160,7 +162,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(ProfilePlaceholderPage), findsOneWidget);
+      expect(find.byType(ProfilePage), findsOneWidget);
 
       expect(
         router.routeInformationProvider.value.uri.path,
@@ -318,6 +320,9 @@ Widget _buildTestApp(GoRouter router) {
     overrides: [
       homeRepositoryProvider.overrideWithValue(
         FakeHomeRepository(operationDelay: Duration.zero),
+      ),
+      profileRepositoryProvider.overrideWithValue(
+        FakeProfileRepository(operationDelay: Duration.zero),
       ),
     ],
     child: MaterialApp.router(

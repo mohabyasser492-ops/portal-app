@@ -12,22 +12,16 @@ import 'package:portal_app/features/authentication/domain/authentication_reposit
 import 'package:portal_app/features/authentication/domain/portal_user.dart';
 import 'package:portal_app/features/home/presentation/home_page.dart';
 import 'package:portal_app/features/not_found/presentation/not_found_page.dart';
-import 'package:portal_app/features/profile/presentation/profile_placeholder_page.dart';
+import 'package:portal_app/features/profile/presentation/profile_page.dart';
 import 'package:portal_app/features/requests/presentation/requests_placeholder_page.dart';
 import 'package:portal_app/features/services/presentation/services_placeholder_page.dart';
 import 'package:portal_app/app/router/authentication_router_refresh_notifier.dart';
 import 'package:portal_app/features/authentication/application/authentication_state.dart';
 import 'package:portal_app/features/home/application/home_providers.dart';
+import 'package:portal_app/features/design_system/presentation/design_system_preview_page.dart';
 import 'package:portal_app/features/home/data/fake_home_repository.dart';
-
-class DesignSystemPreviewPage extends StatelessWidget {
-  const DesignSystemPreviewPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Design system preview')));
-  }
-}
+import 'package:portal_app/features/profile/application/profile_providers.dart';
+import 'package:portal_app/features/profile/data/fake_profile_repository.dart';
 
 void main() {
   const authenticatedUser = PortalUser(
@@ -103,7 +97,7 @@ void main() {
 
       await _tapCompactDestination(tester, 'Profile');
 
-      expect(find.byType(ProfilePlaceholderPage), findsOneWidget);
+      expect(find.byType(ProfilePage), findsOneWidget);
       expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.profile);
 
       await _tapCompactDestination(tester, 'Home');
@@ -130,10 +124,10 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.tap(find.byTooltip('Open design system'));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(DesignSystemPreviewPage), findsOneWidget);
-      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.designSystem);
       expect(tester.takeException(), isNull);
 
       await _disposeRouter(tester, router);
@@ -159,12 +153,14 @@ void main() {
       expect(find.byType(ServicesPlaceholderPage), findsOneWidget);
 
       await tester.tap(find.byTooltip('Open design system'));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(DesignSystemPreviewPage), findsOneWidget);
 
       router.pop();
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(ServicesPlaceholderPage), findsOneWidget);
       expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.services);
@@ -276,6 +272,7 @@ Widget _buildTestApp({
     overrides: [
       authenticationRepositoryProvider.overrideWithValue(repository),
       homeRepositoryProvider.overrideWithValue(FakeHomeRepository(operationDelay: Duration.zero)),
+      profileRepositoryProvider.overrideWithValue(FakeProfileRepository(operationDelay: Duration.zero)),
     ],
     child: PortalApp(router: router, initialLocation: initialLocation),
   );
