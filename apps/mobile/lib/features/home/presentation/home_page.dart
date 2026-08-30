@@ -10,6 +10,7 @@ import '../application/home_state.dart';
 import '../application/home_status.dart';
 import '../domain/home_dashboard.dart';
 import 'widgets/home_recent_request_card.dart';
+import 'widgets/home_announcement_card.dart';
 
 /// Home dashboard displayed after successful authentication.
 ///
@@ -125,33 +126,43 @@ class _HomeDashboardView extends StatelessWidget {
           ).textTheme.bodyMedium?.copyWith(color: PortalColors.textSecondary),
         ),
         const SizedBox(height: PortalSpacing.xl),
-        _DashboardValueCard(
-          label: 'Pending requests',
-          value: dashboard.pendingRequestCount,
-          icon: Icons.schedule_outlined,
-        ),
-        const SizedBox(height: PortalSpacing.md),
-        _DashboardValueCard(
-          label: 'Approved requests',
-          value: dashboard.approvedRequestCount,
-          icon: Icons.check_circle_outline,
-        ),
-        const SizedBox(height: PortalSpacing.md),
-        _DashboardValueCard(
-          label: 'Available services',
-          value: dashboard.availableServiceCount,
-          icon: Icons.apps_outlined,
-        ),
+        _DashboardSummaryGrid(dashboard: dashboard),
         const SizedBox(height: PortalSpacing.xl),
-        const _HomeSectionHeader(title: 'Recent requests', icon: Icons.description_outlined),
+        const _HomeSectionHeader(
+          title: 'Recent requests',
+          icon: Icons.description_outlined,
+        ),
         const SizedBox(height: PortalSpacing.md),
         if (dashboard.recentRequests.isEmpty)
-          const _HomeSectionEmptyCard(message: 'No recent requests are available.')
+          const _HomeSectionEmptyCard(
+            message: 'No recent requests are available.',
+          )
         else
           ...dashboard.recentRequests.map((request) {
             return Padding(
-              padding: const EdgeInsetsDirectional.only(bottom: PortalSpacing.md),
+              padding: const EdgeInsetsDirectional.only(
+                bottom: PortalSpacing.md,
+              ),
               child: HomeRecentRequestCard(request: request),
+            );
+          }),
+        const SizedBox(height: PortalSpacing.lg),
+        const _HomeSectionHeader(
+          title: 'Announcements',
+          icon: Icons.campaign_outlined,
+        ),
+        const SizedBox(height: PortalSpacing.md),
+        if (dashboard.announcements.isEmpty)
+          const _HomeSectionEmptyCard(
+            message: 'No announcements are available.',
+          )
+        else
+          ...dashboard.announcements.map((announcement) {
+            return Padding(
+              padding: const EdgeInsetsDirectional.only(
+                bottom: PortalSpacing.md,
+              ),
+              child: HomeAnnouncementCard(announcement: announcement),
             );
           }),
       ],
@@ -159,9 +170,79 @@ class _HomeDashboardView extends StatelessWidget {
   }
 }
 
+/// Responsive grid containing the Home dashboard summary cards.
+///
+/// Compact layouts use one column, medium layouts use two columns, and wide
+/// layouts use three columns.
+class _DashboardSummaryGrid extends StatelessWidget {
+  const _DashboardSummaryGrid({required this.dashboard});
+
+  final HomeDashboard dashboard;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columnCount = _columnCountForWidth(constraints.maxWidth);
+
+        final totalSpacing = PortalSpacing.md * (columnCount - 1);
+
+        final cardWidth = (constraints.maxWidth - totalSpacing) / columnCount;
+
+        return Wrap(
+          spacing: PortalSpacing.md,
+          runSpacing: PortalSpacing.md,
+          children: [
+            SizedBox(
+              width: cardWidth,
+              child: _DashboardValueCard(
+                label: 'Pending requests',
+                value: dashboard.pendingRequestCount,
+                icon: Icons.schedule_outlined,
+              ),
+            ),
+            SizedBox(
+              width: cardWidth,
+              child: _DashboardValueCard(
+                label: 'Approved requests',
+                value: dashboard.approvedRequestCount,
+                icon: Icons.check_circle_outline,
+              ),
+            ),
+            SizedBox(
+              width: cardWidth,
+              child: _DashboardValueCard(
+                label: 'Available services',
+                value: dashboard.availableServiceCount,
+                icon: Icons.apps_outlined,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  int _columnCountForWidth(double width) {
+    if (width >= 900) {
+      return 3;
+    }
+
+    if (width >= 600) {
+      return 2;
+    }
+
+    return 1;
+  }
+}
+
 /// Summary card displayed near the top of the dashboard.
 class _DashboardValueCard extends StatelessWidget {
-  const _DashboardValueCard({required this.label, required this.value, required this.icon});
+  const _DashboardValueCard({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
 
   final String label;
   final int value;
@@ -178,7 +259,11 @@ class _DashboardValueCard extends StatelessWidget {
             padding: const EdgeInsetsDirectional.all(PortalSpacing.md),
             child: Row(
               children: [
-                Icon(icon, color: PortalColors.actionPrimary, size: PortalIconSizes.lg),
+                Icon(
+                  icon,
+                  color: PortalColors.actionPrimary,
+                  size: PortalIconSizes.lg,
+                ),
                 const SizedBox(width: PortalSpacing.md),
                 Expanded(
                   child: Column(
@@ -186,12 +271,14 @@ class _DashboardValueCard extends StatelessWidget {
                     children: [
                       Text(
                         value.toString(),
-                        style: Theme.of(
-                          context,
-                        ).textTheme.headlineSmall?.copyWith(color: PortalColors.actionPrimary),
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(color: PortalColors.actionPrimary),
                       ),
                       const SizedBox(height: PortalSpacing.xs),
-                      Text(label, style: Theme.of(context).textTheme.bodyMedium),
+                      Text(
+                        label,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                     ],
                   ),
                 ),
@@ -216,10 +303,16 @@ class _HomeSectionHeader extends StatelessWidget {
     return Row(
       children: [
         ExcludeSemantics(
-          child: Icon(icon, color: PortalColors.actionPrimary, size: PortalIconSizes.md),
+          child: Icon(
+            icon,
+            color: PortalColors.actionPrimary,
+            size: PortalIconSizes.md,
+          ),
         ),
         const SizedBox(width: PortalSpacing.sm),
-        Expanded(child: Text(title, style: Theme.of(context).textTheme.titleLarge)),
+        Expanded(
+          child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+        ),
       ],
     );
   }
@@ -239,15 +332,18 @@ class _HomeSectionEmptyCard extends StatelessWidget {
         child: Row(
           children: [
             const ExcludeSemantics(
-              child: Icon(Icons.inbox_outlined, color: PortalColors.textSecondary),
+              child: Icon(
+                Icons.inbox_outlined,
+                color: PortalColors.textSecondary,
+              ),
             ),
             const SizedBox(width: PortalSpacing.md),
             Expanded(
               child: Text(
                 message,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: PortalColors.textSecondary),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: PortalColors.textSecondary,
+                ),
               ),
             ),
           ],
@@ -272,7 +368,8 @@ class _HomeEmptyView extends StatelessWidget {
       children: [
         PortalEmptyState(
           title: 'No dashboard information',
-          description: 'Dashboard information will appear when it becomes available.',
+          description:
+              'Dashboard information will appear when it becomes available.',
           icon: Icons.dashboard_outlined,
           actionLabel: 'Refresh',
           onAction: onRefresh,

@@ -9,9 +9,115 @@ import 'package:portal_app/features/home/data/fake_home_repository.dart';
 import 'package:portal_app/features/home/domain/home_dashboard.dart';
 import 'package:portal_app/features/home/domain/home_repository.dart';
 import 'package:portal_app/features/home/presentation/home_page.dart';
+import 'package:portal_app/features/home/presentation/widgets/home_announcement_card.dart';
 
 void main() {
   group('HomePage', () {
+    testWidgets('displays dashboard announcements', (tester) async {
+      final repository = FakeHomeRepository(operationDelay: Duration.zero);
+
+      await tester.pumpWidget(_buildTestApp(repository: repository));
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey<String>('home-dashboard')),
+        findsOneWidget,
+      );
+
+      await tester.scrollUntilVisible(
+        find.text('Announcements'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+
+      expect(find.text('Announcements'), findsOneWidget);
+
+      await tester.scrollUntilVisible(
+        find.text('Synthetic portal announcement'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+
+      expect(find.text('Synthetic portal announcement'), findsOneWidget);
+
+      expect(
+        find.text(
+          'This is synthetic announcement content '
+          'for frontend development.',
+        ),
+        findsOneWidget,
+      );
+
+      expect(find.text('Pinned'), findsOneWidget);
+
+      await tester.scrollUntilVisible(
+        find.text('Synthetic services update'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+
+      expect(find.text('Synthetic services update'), findsOneWidget);
+
+      expect(
+        find.text('Several synthetic employee services are now available.'),
+        findsOneWidget,
+      );
+
+      expect(find.byType(HomeAnnouncementCard), findsNWidgets(2));
+
+      expect(repository.loadDashboardCallCount, 1);
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('displays an empty announcement section when requests exist', (
+      tester,
+    ) async {
+      final repository = _ControlledHomeRepository(
+        loadCallback: () async {
+          return HomeDashboard(
+            employeeDisplayName: 'Portal Employee',
+            pendingRequestCount: 1,
+            approvedRequestCount: 0,
+            availableServiceCount: 4,
+            recentRequests: const [],
+            announcements: const [],
+          );
+        },
+      );
+
+      await tester.pumpWidget(_buildTestApp(repository: repository));
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey<String>('home-dashboard')),
+        findsOneWidget,
+      );
+
+      await tester.scrollUntilVisible(
+        find.text('Announcements'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+
+      expect(find.text('Announcements'), findsOneWidget);
+
+      await tester.scrollUntilVisible(
+        find.text('No announcements are available.'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+
+      expect(find.text('No announcements are available.'), findsOneWidget);
+
+      expect(find.byType(HomeAnnouncementCard), findsNothing);
+
+      expect(repository.loadDashboardCallCount, 1);
+
+      expect(tester.takeException(), isNull);
+    });
     testWidgets('displays loading while dashboard is requested', (
       tester,
     ) async {
@@ -321,6 +427,126 @@ void main() {
 
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('uses one summary column on compact screens', (tester) async {
+      await _setTestViewport(tester, const Size(390, 844));
+
+      final repository = FakeHomeRepository(operationDelay: Duration.zero);
+
+      await tester.pumpWidget(_buildTestApp(repository: repository));
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey<String>('home-dashboard')),
+        findsOneWidget,
+      );
+
+      final pendingFinder = find.text('Pending requests');
+      final approvedFinder = find.text('Approved requests');
+
+      expect(pendingFinder, findsOneWidget);
+
+      expect(approvedFinder, findsOneWidget);
+
+      final pendingPosition = tester.getTopLeft(pendingFinder);
+
+      final approvedPosition = tester.getTopLeft(approvedFinder);
+
+      expect(approvedPosition.dy, greaterThan(pendingPosition.dy));
+
+      expect((approvedPosition.dx - pendingPosition.dx).abs(), lessThan(2));
+
+      expect(repository.loadDashboardCallCount, 1);
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('uses two summary columns on medium screens', (tester) async {
+      await _setTestViewport(tester, const Size(700, 844));
+
+      final repository = FakeHomeRepository(operationDelay: Duration.zero);
+
+      await tester.pumpWidget(_buildTestApp(repository: repository));
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey<String>('home-dashboard')),
+        findsOneWidget,
+      );
+
+      final pendingFinder = find.text('Pending requests');
+      final approvedFinder = find.text('Approved requests');
+      final servicesFinder = find.text('Available services');
+
+      expect(pendingFinder, findsOneWidget);
+
+      expect(approvedFinder, findsOneWidget);
+
+      expect(servicesFinder, findsOneWidget);
+
+      final pendingPosition = tester.getTopLeft(pendingFinder);
+
+      final approvedPosition = tester.getTopLeft(approvedFinder);
+
+      final servicesPosition = tester.getTopLeft(servicesFinder);
+
+      expect((approvedPosition.dy - pendingPosition.dy).abs(), lessThan(2));
+
+      expect(approvedPosition.dx, greaterThan(pendingPosition.dx));
+
+      expect(servicesPosition.dy, greaterThan(pendingPosition.dy));
+
+      expect((servicesPosition.dx - pendingPosition.dx).abs(), lessThan(2));
+
+      expect(repository.loadDashboardCallCount, 1);
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('uses three summary columns on wide screens', (tester) async {
+      await _setTestViewport(tester, const Size(1100, 844));
+
+      final repository = FakeHomeRepository(operationDelay: Duration.zero);
+
+      await tester.pumpWidget(_buildTestApp(repository: repository));
+
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey<String>('home-dashboard')),
+        findsOneWidget,
+      );
+
+      final pendingFinder = find.text('Pending requests');
+      final approvedFinder = find.text('Approved requests');
+      final servicesFinder = find.text('Available services');
+
+      expect(pendingFinder, findsOneWidget);
+
+      expect(approvedFinder, findsOneWidget);
+
+      expect(servicesFinder, findsOneWidget);
+
+      final pendingPosition = tester.getTopLeft(pendingFinder);
+
+      final approvedPosition = tester.getTopLeft(approvedFinder);
+
+      final servicesPosition = tester.getTopLeft(servicesFinder);
+
+      expect((approvedPosition.dy - pendingPosition.dy).abs(), lessThan(2));
+
+      expect((servicesPosition.dy - pendingPosition.dy).abs(), lessThan(2));
+
+      expect(approvedPosition.dx, greaterThan(pendingPosition.dx));
+
+      expect(servicesPosition.dx, greaterThan(approvedPosition.dx));
+
+      expect(repository.loadDashboardCallCount, 1);
+
+      expect(tester.takeException(), isNull);
+    });
   });
 }
 
@@ -334,10 +560,7 @@ Widget _buildTestApp({
     child: MaterialApp(
       theme: PortalTheme.light,
       home: MediaQuery(
-        data: MediaQueryData(
-          size: const Size(390, 844),
-          textScaler: textScaler,
-        ),
+        data: MediaQueryData(textScaler: textScaler),
         child: Directionality(
           textDirection: textDirection,
           child: const Scaffold(body: HomePage()),
@@ -371,4 +594,16 @@ final class _ControlledHomeRepository implements HomeRepository {
 
     return loadCallback();
   }
+}
+
+Future<void> _setTestViewport(WidgetTester tester, Size size) async {
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = size;
+
+  addTearDown(() {
+    tester.view.resetDevicePixelRatio();
+    tester.view.resetPhysicalSize();
+  });
+
+  await tester.pump();
 }
