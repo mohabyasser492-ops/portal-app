@@ -247,9 +247,31 @@ void main() {
 
       expect(find.text('Pending requests'), findsOneWidget);
 
+      await tester.scrollUntilVisible(
+        find.text('Approved requests'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+
       expect(find.text('Approved requests'), findsOneWidget);
 
+      await tester.scrollUntilVisible(
+        find.text('Available services'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+
       expect(find.text('Available services'), findsOneWidget);
+
+      await tester.scrollUntilVisible(
+        find.text('Recent requests'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+
+      expect(find.text('Recent requests'), findsOneWidget);
+
+      expect(repository.loadDashboardCallCount, 1);
 
       expect(tester.takeException(), isNull);
     });
