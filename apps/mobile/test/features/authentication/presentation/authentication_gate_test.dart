@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,9 +49,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('displays signed-out page when no session exists', (
-      tester,
-    ) async {
+    testWidgets('displays signed-out page when no session exists', (tester) async {
       final repository = FakeAuthenticationRepository(restoredUser: null);
 
       await tester.pumpWidget(_buildTestApp(repository: repository));
@@ -69,12 +67,8 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('displays authenticated content after restoration', (
-      tester,
-    ) async {
-      final repository = FakeAuthenticationRepository(
-        restoredUser: authenticatedUser,
-      );
+    testWidgets('displays authenticated content after restoration', (tester) async {
+      final repository = FakeAuthenticationRepository(restoredUser: authenticatedUser);
 
       await tester.pumpWidget(_buildTestApp(repository: repository));
 
@@ -114,9 +108,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('displays a failure when session restoration fails', (
-      tester,
-    ) async {
+    testWidgets('displays a failure when session restoration fails', (tester) async {
       final repository = FakeAuthenticationRepository(
         restoreSessionError: Exception('Synthetic restoration failure'),
       );
@@ -129,10 +121,7 @@ void main() {
 
       expect(find.text('Authentication unavailable'), findsOneWidget);
 
-      expect(
-        find.text('Unable to restore the authentication session.'),
-        findsOneWidget,
-      );
+      expect(find.text('Unable to restore the authentication session.'), findsOneWidget);
 
       expect(find.text('Try again'), findsOneWidget);
 
@@ -168,9 +157,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('returns to sign in after dismissing a failure', (
-      tester,
-    ) async {
+    testWidgets('returns to sign in after dismissing a failure', (tester) async {
       final repository = FakeAuthenticationRepository(
         restoreSessionError: Exception('Synthetic restoration failure'),
       );
@@ -192,9 +179,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('displays a failure when interactive sign in fails', (
-      tester,
-    ) async {
+    testWidgets('displays a failure when interactive sign in fails', (tester) async {
       final repository = FakeAuthenticationRepository(
         restoredUser: null,
         signInError: Exception('Synthetic sign-in failure'),
@@ -251,9 +236,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('prevents repeated sign-in actions while signing in', (
-      tester,
-    ) async {
+    testWidgets('prevents repeated sign-in actions while signing in', (tester) async {
       final signInCompleter = Completer<PortalUser>();
 
       final repository = _ControlledAuthenticationRepository(
@@ -289,16 +272,11 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('does not overflow with increased text scaling', (
-      tester,
-    ) async {
+    testWidgets('does not overflow with increased text scaling', (tester) async {
       final repository = FakeAuthenticationRepository(restoredUser: null);
 
       await tester.pumpWidget(
-        _buildTestApp(
-          repository: repository,
-          textScaler: const TextScaler.linear(2),
-        ),
+        _buildTestApp(repository: repository, textScaler: const TextScaler.linear(2)),
       );
 
       await tester.pumpAndSettle();
@@ -345,16 +323,11 @@ Widget _buildTestApp({
     child: MaterialApp(
       theme: PortalTheme.light,
       home: MediaQuery(
-        data: MediaQueryData(
-          size: const Size(390, 844),
-          textScaler: textScaler,
-        ),
+        data: MediaQueryData(size: const Size(390, 844), textScaler: textScaler),
         child: Directionality(
           textDirection: textDirection,
           child: const AuthenticationGate(
-            authenticatedChild: Scaffold(
-              body: Center(child: Text('Authenticated content')),
-            ),
+            authenticatedChild: Scaffold(body: Center(child: Text('Authenticated content'))),
           ),
         ),
       ),
@@ -362,12 +335,8 @@ Widget _buildTestApp({
   );
 }
 
-final class _ControlledAuthenticationRepository
-    implements AuthenticationRepository {
-  _ControlledAuthenticationRepository({
-    required this.restoreSessionCallback,
-    this.signInCallback,
-  });
+final class _ControlledAuthenticationRepository implements AuthenticationRepository {
+  _ControlledAuthenticationRepository({required this.restoreSessionCallback, this.signInCallback});
 
   final Future<PortalUser?> Function() restoreSessionCallback;
   final Future<PortalUser> Function()? signInCallback;
@@ -390,9 +359,7 @@ final class _ControlledAuthenticationRepository
     final callback = signInCallback;
 
     if (callback == null) {
-      return Future<PortalUser>.error(
-        StateError('No sign-in callback was configured.'),
-      );
+      return Future<PortalUser>.error(StateError('No sign-in callback was configured.'));
     }
 
     return callback();
@@ -405,4 +372,3 @@ final class _ControlledAuthenticationRepository
     return Future<void>.value();
   }
 }
-
