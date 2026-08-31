@@ -2,6 +2,7 @@ using PortalApp.Api.Cancellation;
 using PortalApp.Api.Configuration;
 using PortalApp.Api.Errors;
 using PortalApp.Api.FileSecurity;
+using PortalApp.Api.Idempotency;
 using PortalApp.Api.Middleware;
 using PortalApp.Api.Notifications;
 
@@ -28,6 +29,8 @@ builder.Services.AddPortalFileSecurity(
     builder.Configuration);
 builder.Services.AddPortalPushNotifications(
     builder.Configuration);
+builder.Services.AddPortalIdempotency(
+    builder.Configuration);
 
 builder.Services.AddSingleton<PortalProblemDetailsCustomizer>();
 
@@ -52,6 +55,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UsePortalIdempotency();
 
 app.UseRateLimiter();
 
