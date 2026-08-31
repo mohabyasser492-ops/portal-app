@@ -5,13 +5,11 @@ using PortalApp.Api.FileSecurity;
 using PortalApp.Api.Idempotency;
 using PortalApp.Api.Middleware;
 using PortalApp.Api.Notifications;
-
+using PortalApp.Api.Observability;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddHealthChecks();
-
 builder.Services.AddPortalApiSecurity(
     builder.Configuration);
 
@@ -31,6 +29,8 @@ builder.Services.AddPortalPushNotifications(
     builder.Configuration);
 builder.Services.AddPortalIdempotency(
     builder.Configuration);
+builder.Services.AddPortalObservability(
+    builder.Configuration);
 
 builder.Services.AddSingleton<PortalProblemDetailsCustomizer>();
 
@@ -49,6 +49,7 @@ builder.Services.AddProblemDetails(options =>
 var app = builder.Build();
 
 app.UseCorrelationId();
+app.UsePortalObservability();
 app.UsePortalRequestCancellation();
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
@@ -65,6 +66,7 @@ app.MapControllers()
 
 app.MapHealthChecks("/health")
     .AllowAnonymous();
+app.MapPortalHealthChecks();
 
 app.Run();
 
