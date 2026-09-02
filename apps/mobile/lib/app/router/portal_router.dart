@@ -9,7 +9,7 @@ import '../../features/home/presentation/home_page.dart';
 import '../../features/not_found/presentation/not_found_page.dart';
 import '../../features/profile/presentation/profile_page.dart';
 import '../../features/requests/presentation/requests_placeholder_page.dart';
-import '../../features/services/presentation/services_placeholder_page.dart';
+import '../../features/services/presentation/services_page.dart';
 import 'authentication_redirect_guard.dart';
 import 'authentication_redirect_store.dart';
 import 'authentication_router_refresh_notifier.dart';
@@ -111,7 +111,7 @@ GoRouter createPortalRouter({
                 path: PortalRoutePaths.services,
                 name: PortalRouteNames.services,
                 builder: (context, state) {
-                  return const ServicesPlaceholderPage();
+                  return const ServicesPage();
                 },
               ),
             ],

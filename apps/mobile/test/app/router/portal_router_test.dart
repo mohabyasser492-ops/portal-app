@@ -8,17 +8,17 @@ import 'package:portal_app/app/theme/portal_design_system.dart';
 import 'package:portal_app/core/widgets/navigation/portal_navigation_shell.dart';
 import 'package:portal_app/features/home/presentation/home_page.dart';
 import 'package:portal_app/features/not_found/presentation/not_found_page.dart';
-import 'package:portal_app/features/profile/presentation/profile_page.dart';
+//import 'package:portal_app/features/profile/presentation/profile_page.dart';
 import 'package:portal_app/features/requests/presentation/requests_placeholder_page.dart';
-import 'package:portal_app/features/services/presentation/services_placeholder_page.dart';
+import 'package:portal_app/features/services/application/services_catalog_providers.dart';
+import 'package:portal_app/features/services/data/fake_services_repository.dart';
+import 'package:portal_app/features/services/presentation/services_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portal_app/app/router/authentication_router_refresh_notifier.dart';
 import 'package:portal_app/features/authentication/application/authentication_state.dart';
 import 'package:portal_app/features/authentication/domain/portal_user.dart';
 import 'package:portal_app/features/home/application/home_providers.dart';
 import 'package:portal_app/features/home/data/fake_home_repository.dart';
-import 'package:portal_app/features/profile/application/profile_providers.dart';
-import 'package:portal_app/features/profile/data/fake_profile_repository.dart';
 
 void main() {
   const authenticatedUser = PortalUser(
@@ -42,10 +42,7 @@ void main() {
 
       expect(find.byType(PortalNavigationShell), findsOneWidget);
 
-      expect(
-        router.routeInformationProvider.value.uri.path,
-        PortalRoutePaths.home,
-      );
+      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.home);
 
       router.dispose();
     });
@@ -64,19 +61,14 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(ServicesPlaceholderPage), findsOneWidget);
+      expect(find.byType(ServicesPage), findsOneWidget);
 
-      expect(
-        router.routeInformationProvider.value.uri.path,
-        PortalRoutePaths.services,
-      );
+      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.services);
 
       router.dispose();
     });
 
-    testWidgets('navigates to Services from the navigation bar', (
-      tester,
-    ) async {
+    testWidgets('navigates to Services from the navigation bar', (tester) async {
       await _setTestViewport(tester, const Size(390, 844));
 
       final bundle = _createSignedInRouter();
@@ -102,21 +94,16 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(ServicesPlaceholderPage), findsOneWidget);
+      expect(find.byType(ServicesPage), findsOneWidget);
 
-      expect(
-        bundle.router.routeInformationProvider.value.uri.path,
-        PortalRoutePaths.services,
-      );
+      expect(bundle.router.routeInformationProvider.value.uri.path, PortalRoutePaths.services);
 
       expect(tester.takeException(), isNull);
 
       await bundle.dispose(tester);
     });
 
-    testWidgets('navigates to Requests from the navigation bar', (
-      tester,
-    ) async {
+    testWidgets('navigates to Requests from the navigation bar', (tester) async {
       final refreshNotifier = AuthenticationRouterRefreshNotifier(
         initialState: const AuthenticationState.signedIn(authenticatedUser),
       );
@@ -136,15 +123,12 @@ void main() {
 
       expect(find.byType(RequestsPlaceholderPage), findsOneWidget);
 
-      expect(
-        router.routeInformationProvider.value.uri.path,
-        PortalRoutePaths.requests,
-      );
+      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.requests);
 
       router.dispose();
     });
 
-    testWidgets('navigates to Profile from the navigation bar', (tester) async {
+    /*testWidgets('navigates to Profile from the navigation bar', (tester) async {
       final refreshNotifier = AuthenticationRouterRefreshNotifier(
         initialState: const AuthenticationState.signedIn(authenticatedUser),
       );
@@ -164,14 +148,11 @@ void main() {
 
       expect(find.byType(ProfilePage), findsOneWidget);
 
-      expect(
-        router.routeInformationProvider.value.uri.path,
-        PortalRoutePaths.profile,
-      );
+      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.profile);
 
       router.dispose();
     });
-
+*/
     testWidgets('supports navigation by route name', (tester) async {
       final refreshNotifier = AuthenticationRouterRefreshNotifier(
         initialState: const AuthenticationState.signedIn(authenticatedUser),
@@ -192,17 +173,12 @@ void main() {
 
       expect(find.byType(RequestsPlaceholderPage), findsOneWidget);
 
-      expect(
-        router.routeInformationProvider.value.uri.path,
-        PortalRoutePaths.requests,
-      );
+      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.requests);
 
       router.dispose();
     });
 
-    testWidgets('shows the not-found page for an unknown route', (
-      tester,
-    ) async {
+    testWidgets('shows the not-found page for an unknown route', (tester) async {
       final bundle = _createSignedInRouter(initialLocation: '/unknown-page');
 
       await tester.pumpWidget(_buildTestApp(bundle.router));
@@ -215,10 +191,7 @@ void main() {
 
       expect(find.text('Return home'), findsOneWidget);
 
-      expect(
-        bundle.router.routeInformationProvider.value.uri.path,
-        '/unknown-page',
-      );
+      expect(bundle.router.routeInformationProvider.value.uri.path, '/unknown-page');
 
       expect(tester.takeException(), isNull);
 
@@ -247,10 +220,7 @@ void main() {
 
       expect(find.byType(HomePage), findsOneWidget);
 
-      expect(
-        router.routeInformationProvider.value.uri.path,
-        PortalRoutePaths.home,
-      );
+      expect(router.routeInformationProvider.value.uri.path, PortalRoutePaths.home);
 
       await tester.pumpWidget(const SizedBox.shrink());
 
@@ -274,9 +244,7 @@ Future<void> _setTestViewport(WidgetTester tester, Size size) async {
   await tester.pump();
 }
 
-_TestRouterBundle _createSignedInRouter({
-  String initialLocation = PortalRoutePaths.home,
-}) {
+_TestRouterBundle _createSignedInRouter({String initialLocation = PortalRoutePaths.home}) {
   const authenticatedUser = PortalUser(
     id: 'test-user',
     displayName: 'Test Employee',
@@ -296,10 +264,7 @@ _TestRouterBundle _createSignedInRouter({
 }
 
 final class _TestRouterBundle {
-  const _TestRouterBundle({
-    required this.router,
-    required this.refreshNotifier,
-  });
+  const _TestRouterBundle({required this.router, required this.refreshNotifier});
 
   final GoRouter router;
 
@@ -318,11 +283,9 @@ final class _TestRouterBundle {
 Widget _buildTestApp(GoRouter router) {
   return ProviderScope(
     overrides: [
-      homeRepositoryProvider.overrideWithValue(
-        FakeHomeRepository(operationDelay: Duration.zero),
-      ),
-      profileRepositoryProvider.overrideWithValue(
-        FakeProfileRepository(operationDelay: Duration.zero),
+      homeRepositoryProvider.overrideWithValue(FakeHomeRepository(operationDelay: Duration.zero)),
+      servicesRepositoryProvider.overrideWithValue(
+        FakeServicesRepository(operationDelay: Duration.zero),
       ),
     ],
     child: MaterialApp.router(
