@@ -8,7 +8,10 @@ import '../../features/design_system/presentation/design_system_preview_page.dar
 import '../../features/home/presentation/home_page.dart';
 import '../../features/not_found/presentation/not_found_page.dart';
 import '../../features/profile/presentation/profile_page.dart';
-import '../../features/requests/presentation/requests_placeholder_page.dart';
+import '../../features/requests/domain/request_type.dart';
+import '../../features/requests/presentation/request_create_page.dart';
+import '../../features/requests/presentation/request_details_page.dart';
+import '../../features/requests/presentation/requests_page.dart';
 import '../../features/services/presentation/services_page.dart';
 import 'authentication_redirect_guard.dart';
 import 'authentication_redirect_store.dart';
@@ -25,31 +28,19 @@ GoRouter createPortalRouter({
   required AuthenticationRouterRefreshNotifier refreshNotifier,
   AuthenticationRedirectStore? redirectStore,
 }) {
-  final rootNavigatorKey = GlobalKey<NavigatorState>(
-    debugLabel: 'portal-root-navigator',
-  );
+  final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'portal-root-navigator');
 
-  final homeNavigatorKey = GlobalKey<NavigatorState>(
-    debugLabel: 'portal-home-navigator',
-  );
+  final homeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'portal-home-navigator');
 
-  final servicesNavigatorKey = GlobalKey<NavigatorState>(
-    debugLabel: 'portal-services-navigator',
-  );
+  final servicesNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'portal-services-navigator');
 
-  final requestsNavigatorKey = GlobalKey<NavigatorState>(
-    debugLabel: 'portal-requests-navigator',
-  );
+  final requestsNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'portal-requests-navigator');
 
-  final profileNavigatorKey = GlobalKey<NavigatorState>(
-    debugLabel: 'portal-profile-navigator',
-  );
+  final profileNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'portal-profile-navigator');
 
   final effectiveRedirectStore = redirectStore ?? AuthenticationRedirectStore();
 
-  final redirectGuard = AuthenticationRedirectGuard(
-    redirectStore: effectiveRedirectStore,
-  );
+  final redirectGuard = AuthenticationRedirectGuard(redirectStore: effectiveRedirectStore);
 
   return GoRouter(
     navigatorKey: rootNavigatorKey,
@@ -122,9 +113,22 @@ GoRouter createPortalRouter({
               GoRoute(
                 path: PortalRoutePaths.requests,
                 name: PortalRouteNames.requests,
-                builder: (context, state) {
-                  return const RequestsPlaceholderPage();
-                },
+                builder: (context, state) => const RequestsPage(),
+                routes: [
+                  GoRoute(
+                    path: 'create',
+                    name: 'request-create',
+                    builder: (context, state) => RequestCreatePage(
+                      initialType: state.extra is RequestType ? state.extra as RequestType : null,
+                    ),
+                  ),
+                  GoRoute(
+                    path: ':requestId',
+                    name: 'request-details',
+                    builder: (context, state) =>
+                        RequestDetailsPage(requestId: state.pathParameters['requestId']!),
+                  ),
+                ],
               ),
             ],
           ),

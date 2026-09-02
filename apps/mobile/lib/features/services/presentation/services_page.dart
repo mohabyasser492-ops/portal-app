@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/theme/portal_design_system.dart';
@@ -10,6 +11,7 @@ import '../application/services_catalog_state.dart';
 import '../application/services_catalog_status.dart';
 import '../domain/portal_service.dart';
 import '../domain/service_category.dart';
+import '../../requests/domain/request_type.dart';
 import 'widgets/service_card.dart';
 import 'widgets/service_category_filter.dart';
 import 'widgets/services_search_field.dart';
@@ -71,15 +73,11 @@ class _ServicesPageState extends ConsumerState<ServicesPage> {
   }
 
   void _updateSearchQuery(String query) {
-    ref
-        .read(servicesCatalogControllerProvider.notifier)
-        .updateSearchQuery(query);
+    ref.read(servicesCatalogControllerProvider.notifier).updateSearchQuery(query);
   }
 
   void _selectCategory(ServiceCategory? category) {
-    ref
-        .read(servicesCatalogControllerProvider.notifier)
-        .selectCategory(category);
+    ref.read(servicesCatalogControllerProvider.notifier).selectCategory(category);
   }
 
   void _clearFilters() {
@@ -137,11 +135,7 @@ class _ServicesLoadingGrid extends StatelessWidget {
           children: List<Widget>.generate(6, (index) {
             return SizedBox(
               width: cardWidth,
-              child: const PortalSkeleton(
-                width: double.infinity,
-                height: 190,
-                animate: false,
-              ),
+              child: const PortalSkeleton(width: double.infinity, height: 190, animate: false),
             );
           }),
         );
@@ -184,10 +178,7 @@ class _ServicesCatalogView extends StatelessWidget {
             ).textTheme.bodyMedium?.copyWith(color: PortalColors.textSecondary),
           ),
           const SizedBox(height: PortalSpacing.xl),
-          ServicesSearchField(
-            query: state.searchQuery,
-            onChanged: onSearchChanged,
-          ),
+          ServicesSearchField(query: state.searchQuery, onChanged: onSearchChanged),
           const SizedBox(height: PortalSpacing.md),
           ServiceCategoryFilter(
             selectedCategory: state.selectedCategory,
@@ -203,7 +194,12 @@ class _ServicesCatalogView extends StatelessWidget {
           if (state.hasNoMatchingServices)
             _NoMatchingServicesView(onClearFilters: onClearFilters)
           else
-            _ServicesGrid(services: state.visibleServices),
+            _ServicesGrid(
+              services: state.visibleServices,
+              onServiceSelected: (service) {
+                context.push('/requests/create', extra: _requestTypeForService(service));
+              },
+            ),
         ],
       ),
     );
@@ -244,9 +240,10 @@ class _ServicesResultSummary extends StatelessWidget {
 
 /// Responsive collection of visible service cards.
 class _ServicesGrid extends StatelessWidget {
-  const _ServicesGrid({required this.services});
+  const _ServicesGrid({required this.services, required this.onServiceSelected});
 
   final List<PortalService> services;
+  final ValueChanged<PortalService> onServiceSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -268,7 +265,7 @@ class _ServicesGrid extends StatelessWidget {
                 return SizedBox(
                   key: ValueKey<String>('service-card-${service.id}'),
                   width: cardWidth,
-                  child: ServiceCard(service: service),
+                  child: ServiceCard(service: service, onTap: () => onServiceSelected(service)),
                 );
               })
               .toList(growable: false),
@@ -348,6 +345,18 @@ class _ServicesFailureView extends StatelessWidget {
   }
 }
 
+RequestType _requestTypeForService(PortalService service) {
+  return switch (service.id) {
+    'service-001' => RequestType.employmentLetter,
+    'service-002' => RequestType.leave,
+    'service-003' => RequestType.payrollInquiry,
+    'service-004' => RequestType.profileUpdate,
+    'service-007' => RequestType.salaryCertificate,
+    'service-008' => RequestType.leave,
+    _ => RequestType.generalInquiry,
+  };
+}
+
 /// Returns the number of service columns for the available width.
 int _servicesColumnCount(double width) {
   if (width >= 1000) {
@@ -362,10 +371,7 @@ int _servicesColumnCount(double width) {
 }
 
 /// Calculates the width of each service card.
-double _servicesCardWidth({
-  required double availableWidth,
-  required int columnCount,
-}) {
+double _servicesCardWidth({required double availableWidth, required int columnCount}) {
   final totalSpacing = PortalSpacing.md * (columnCount - 1);
 
   return (availableWidth - totalSpacing) / columnCount;
