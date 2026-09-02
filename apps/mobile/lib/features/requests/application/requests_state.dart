@@ -16,34 +16,34 @@ final class RequestsState {
     required this.selectedType,
     required this.errorMessage,
     required this.operationMessage,
-  }) : requests = List.unmodifiable(requests),
-       visibleRequests = List.unmodifiable(visibleRequests);
+  })  : requests = List.unmodifiable(requests),
+        visibleRequests = List.unmodifiable(visibleRequests);
 
   factory RequestsState.initial() => RequestsState._(
-    status: RequestsStatus.initial,
-    requests: const [],
-    visibleRequests: const [],
-    searchQuery: '',
-    selectedStatus: null,
-    selectedType: null,
-    errorMessage: null,
-    operationMessage: null,
-  );
+        status: RequestsStatus.initial,
+        requests: const [],
+        visibleRequests: const [],
+        searchQuery: '',
+        selectedStatus: null,
+        selectedType: null,
+        errorMessage: null,
+        operationMessage: null,
+      );
 
   factory RequestsState.loading({
     String searchQuery = '',
     PortalRequestStatus? selectedStatus,
     RequestType? selectedType,
   }) => RequestsState._(
-    status: RequestsStatus.loading,
-    requests: const [],
-    visibleRequests: const [],
-    searchQuery: searchQuery,
-    selectedStatus: selectedStatus,
-    selectedType: selectedType,
-    errorMessage: null,
-    operationMessage: null,
-  );
+        status: RequestsStatus.loading,
+        requests: const [],
+        visibleRequests: const [],
+        searchQuery: searchQuery,
+        selectedStatus: selectedStatus,
+        selectedType: selectedType,
+        errorMessage: null,
+        operationMessage: null,
+      );
 
   factory RequestsState.success({
     required List<PortalRequest> requests,
@@ -53,18 +53,16 @@ final class RequestsState {
     String? operationMessage,
   }) {
     final query = searchQuery.trim().toLowerCase();
-    final visible = requests
-        .where((request) {
-          final matchesQuery =
-              query.isEmpty ||
-              request.title.toLowerCase().contains(query) ||
-              request.referenceNumber.toLowerCase().contains(query) ||
-              request.description.toLowerCase().contains(query);
-          final matchesStatus = selectedStatus == null || request.status == selectedStatus;
-          final matchesType = selectedType == null || request.type == selectedType;
-          return matchesQuery && matchesStatus && matchesType;
-        })
-        .toList(growable: false);
+    final visible = requests.where((request) {
+      final matchesQuery = query.isEmpty ||
+          request.title.toLowerCase().contains(query) ||
+          request.referenceNumber.toLowerCase().contains(query) ||
+          request.description.toLowerCase().contains(query);
+      final matchesStatus = selectedStatus == null ||
+          request.status == selectedStatus;
+      final matchesType = selectedType == null || request.type == selectedType;
+      return matchesQuery && matchesStatus && matchesType;
+    }).toList(growable: false);
 
     return RequestsState._(
       status: RequestsStatus.success,
@@ -79,26 +77,26 @@ final class RequestsState {
   }
 
   factory RequestsState.empty() => RequestsState._(
-    status: RequestsStatus.empty,
-    requests: const [],
-    visibleRequests: const [],
-    searchQuery: '',
-    selectedStatus: null,
-    selectedType: null,
-    errorMessage: null,
-    operationMessage: null,
-  );
+        status: RequestsStatus.empty,
+        requests: const [],
+        visibleRequests: const [],
+        searchQuery: '',
+        selectedStatus: null,
+        selectedType: null,
+        errorMessage: null,
+        operationMessage: null,
+      );
 
   factory RequestsState.failure(String message) => RequestsState._(
-    status: RequestsStatus.failure,
-    requests: const [],
-    visibleRequests: const [],
-    searchQuery: '',
-    selectedStatus: null,
-    selectedType: null,
-    errorMessage: message,
-    operationMessage: null,
-  );
+        status: RequestsStatus.failure,
+        requests: const [],
+        visibleRequests: const [],
+        searchQuery: '',
+        selectedStatus: null,
+        selectedType: null,
+        errorMessage: message,
+        operationMessage: null,
+      );
 
   factory RequestsState.submitting({
     required List<PortalRequest> requests,
@@ -106,15 +104,15 @@ final class RequestsState {
     PortalRequestStatus? selectedStatus,
     RequestType? selectedType,
   }) => RequestsState._(
-    status: RequestsStatus.submitting,
-    requests: requests,
-    visibleRequests: requests,
-    searchQuery: searchQuery,
-    selectedStatus: selectedStatus,
-    selectedType: selectedType,
-    errorMessage: null,
-    operationMessage: null,
-  );
+        status: RequestsStatus.submitting,
+        requests: requests,
+        visibleRequests: requests,
+        searchQuery: searchQuery,
+        selectedStatus: selectedStatus,
+        selectedType: selectedType,
+        errorMessage: null,
+        operationMessage: null,
+      );
 
   final RequestsStatus status;
   final List<PortalRequest> requests;
@@ -131,7 +129,8 @@ final class RequestsState {
   bool get hasFailure => status == RequestsStatus.failure;
   bool get hasActiveFilters =>
       searchQuery.isNotEmpty || selectedStatus != null || selectedType != null;
-  bool get hasNoMatchingRequests => status == RequestsStatus.success && visibleRequests.isEmpty;
+  bool get hasNoMatchingRequests =>
+      status == RequestsStatus.success && visibleRequests.isEmpty;
 
   RequestsState withFilters({
     String? searchQuery,

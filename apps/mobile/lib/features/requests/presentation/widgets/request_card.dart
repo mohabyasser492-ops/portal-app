@@ -38,41 +38,22 @@ class RequestCard extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Text(
-                            request.title,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ),
+                        Expanded(child: Text(request.title, style: Theme.of(context).textTheme.titleMedium)),
                         RequestStatusBadge(status: request.status),
                       ],
                     ),
                     const SizedBox(height: PortalSpacing.xs),
-                    Text(
-                      '${request.referenceNumber} • ${_typeLabel(request.type)}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
+                    Text('${request.referenceNumber} • ${_typeLabel(request.type)}', style: Theme.of(context).textTheme.bodySmall),
                     const SizedBox(height: PortalSpacing.sm),
-                    Text(
-                      request.description,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
+                    Text(request.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyMedium),
                     const SizedBox(height: PortalSpacing.sm),
-                    Text(
-                      'Updated ${_date(request.updatedAt)}',
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
+                    Text('Updated ${_date(request.updatedAt)}', style: Theme.of(context).textTheme.labelSmall),
                   ],
                 ),
               ),
               if (onTap != null)
                 const Padding(
-                  padding: EdgeInsetsDirectional.only(
-                    start: PortalSpacing.sm,
-                    top: PortalSpacing.xs,
-                  ),
+                  padding: EdgeInsetsDirectional.only(start: PortalSpacing.sm, top: PortalSpacing.xs),
                   child: Icon(Icons.chevron_right, color: PortalColors.textSecondary),
                 ),
             ],
@@ -83,13 +64,13 @@ class RequestCard extends StatelessWidget {
   }
 
   static String _typeLabel(RequestType type) => switch (type) {
-    RequestType.leave => 'Leave',
-    RequestType.employmentLetter => 'Employment letter',
-    RequestType.salaryCertificate => 'Salary certificate',
-    RequestType.profileUpdate => 'Profile update',
-    RequestType.payrollInquiry => 'Payroll inquiry',
-    RequestType.generalInquiry => 'General inquiry',
-  };
+        RequestType.leave => 'إجازة',
+        RequestType.employmentLetter => 'خطاب جهة العمل',
+        RequestType.salaryCertificate => 'شهادة راتب',
+        RequestType.profileUpdate => 'تحديث الملف الشخصي',
+        RequestType.payrollInquiry => 'استفسار رواتب',
+        RequestType.generalInquiry => 'استفسار عام',
+      };
 
   static String _date(DateTime value) {
     final d = value.toLocal();

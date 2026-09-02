@@ -39,19 +39,10 @@ class _RequestsPageState extends ConsumerState<RequestsPage> {
         RequestsStatus.initial || RequestsStatus.loading => const _RequestsLoadingView(),
         RequestsStatus.empty => _RequestsEmptyView(onCreate: _createRequest),
         RequestsStatus.failure => _RequestsFailureView(
-          message: state.errorMessage ?? 'Unable to load requests.',
-          onRetry: _retry,
-        ),
-        RequestsStatus.submitting || RequestsStatus.success => _RequestsContent(
-          state: state,
-          onRefresh: _refresh,
-          onCreate: _createRequest,
-          onOpen: _openRequest,
-          onSearchChanged: _updateSearch,
-          onStatusSelected: _selectStatus,
-          onTypeSelected: _selectType,
-          onClearFilters: _clearFilters,
-        ),
+            message: state.errorMessage ?? 'تعذر تحميل الطلبات.',
+            onRetry: _retry,
+          ),
+        RequestsStatus.submitting || RequestsStatus.success => _RequestsContent(state: state, onRefresh: _refresh, onCreate: _createRequest, onOpen: _openRequest, onSearchChanged: _updateSearch, onStatusSelected: _selectStatus, onTypeSelected: _selectType, onClearFilters: _clearFilters),
       },
     );
   }
@@ -85,16 +76,7 @@ class _RequestsPageState extends ConsumerState<RequestsPage> {
 }
 
 class _RequestsContent extends StatelessWidget {
-  const _RequestsContent({
-    required this.state,
-    required this.onRefresh,
-    required this.onCreate,
-    required this.onOpen,
-    required this.onSearchChanged,
-    required this.onStatusSelected,
-    required this.onTypeSelected,
-    required this.onClearFilters,
-  });
+  const _RequestsContent({required this.state, required this.onRefresh, required this.onCreate, required this.onOpen, required this.onSearchChanged, required this.onStatusSelected, required this.onTypeSelected, required this.onClearFilters});
   final RequestsState state;
   final Future<void> Function() onRefresh;
   final VoidCallback onCreate;
@@ -121,21 +103,12 @@ class _RequestsContent extends StatelessWidget {
                   children: [
                     Text('My Requests', style: Theme.of(context).textTheme.headlineMedium),
                     const SizedBox(height: PortalSpacing.xs),
-                    Text(
-                      'Track requests you have submitted through Portal.',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyMedium?.copyWith(color: PortalColors.textSecondary),
-                    ),
+                    Text('تابع الطلبات التي قدمتها من خلال البوابة.', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: PortalColors.textSecondary)),
                   ],
                 ),
               ),
               const SizedBox(width: PortalSpacing.sm),
-              FilledButton.icon(
-                onPressed: state.isSubmitting ? null : onCreate,
-                icon: const Icon(Icons.add),
-                label: const Text('New request'),
-              ),
+              FilledButton.icon(onPressed: state.isSubmitting ? null : onCreate, icon: const Icon(Icons.add), label: const Text('طلب جديد')),
             ],
           ),
           const SizedBox(height: PortalSpacing.xl),
@@ -145,7 +118,7 @@ class _RequestsContent extends StatelessWidget {
             onChanged: onSearchChanged,
             decoration: const InputDecoration(
               labelText: 'Search requests',
-              hintText: 'Search by title, reference, or description',
+              hintText: 'البحث بالعنوان أو الرقم المرجعي أو التفاصيل',
               prefixIcon: Icon(Icons.search),
             ),
           ),
@@ -159,26 +132,21 @@ class _RequestsContent extends StatelessWidget {
             enabled: !state.isSubmitting,
           ),
           const SizedBox(height: PortalSpacing.lg),
-          Text(
-            '${state.visibleRequests.length} of ${state.requests.length} requests',
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
+          Text('${state.visibleRequests.length} of ${state.requests.length} requests', style: Theme.of(context).textTheme.titleSmall),
           const SizedBox(height: PortalSpacing.sm),
           if (state.hasNoMatchingRequests)
             PortalEmptyState(
-              title: 'No matching requests',
-              description: 'Try another search or remove one of the filters.',
+              title: 'لا توجد طلبات مطابقة',
+              description: 'جرّب بحثًا آخر أو أزل إحدى التصفیات.',
               icon: Icons.search_off_outlined,
-              actionLabel: 'Clear filters',
+              actionLabel: 'مسح التصفية',
               onAction: onClearFilters,
             )
           else
-            ...state.visibleRequests.map(
-              (request) => Padding(
-                padding: const EdgeInsetsDirectional.only(bottom: PortalSpacing.md),
-                child: RequestCard(request: request, onTap: () => onOpen(request.id)),
-              ),
-            ),
+            ...state.visibleRequests.map((request) => Padding(
+                  padding: const EdgeInsetsDirectional.only(bottom: PortalSpacing.md),
+                  child: RequestCard(request: request, onTap: () => onOpen(request.id)),
+                )),
         ],
       ),
     );
@@ -189,19 +157,19 @@ class _RequestsLoadingView extends StatelessWidget {
   const _RequestsLoadingView();
   @override
   Widget build(BuildContext context) => ListView(
-    padding: const EdgeInsetsDirectional.all(PortalSpacing.md),
-    children: const [
-      PortalSkeleton(width: 180, height: 32, animate: false),
-      SizedBox(height: PortalSpacing.sm),
-      PortalSkeleton(width: 300, height: 20, animate: false),
-      SizedBox(height: PortalSpacing.xl),
-      PortalSkeleton(width: double.infinity, height: 56, animate: false),
-      SizedBox(height: PortalSpacing.lg),
-      PortalSkeleton(width: double.infinity, height: 120, animate: false),
-      SizedBox(height: PortalSpacing.md),
-      PortalSkeleton(width: double.infinity, height: 120, animate: false),
-    ],
-  );
+        padding: const EdgeInsetsDirectional.all(PortalSpacing.md),
+        children: const [
+          PortalSkeleton(width: 180, height: 32, animate: false),
+          SizedBox(height: PortalSpacing.sm),
+          PortalSkeleton(width: 300, height: 20, animate: false),
+          SizedBox(height: PortalSpacing.xl),
+          PortalSkeleton(width: double.infinity, height: 56, animate: false),
+          SizedBox(height: PortalSpacing.lg),
+          PortalSkeleton(width: double.infinity, height: 120, animate: false),
+          SizedBox(height: PortalSpacing.md),
+          PortalSkeleton(width: double.infinity, height: 120, animate: false),
+        ],
+      );
 }
 
 class _RequestsEmptyView extends StatelessWidget {
@@ -209,17 +177,17 @@ class _RequestsEmptyView extends StatelessWidget {
   final VoidCallback onCreate;
   @override
   Widget build(BuildContext context) => ListView(
-    padding: const EdgeInsetsDirectional.all(PortalSpacing.md),
-    children: [
-      PortalEmptyState(
-        title: 'No requests yet',
-        description: 'Create your first employee request to start tracking it here.',
-        icon: Icons.description_outlined,
-        actionLabel: 'Create request',
-        onAction: onCreate,
-      ),
-    ],
-  );
+        padding: const EdgeInsetsDirectional.all(PortalSpacing.md),
+        children: [
+          PortalEmptyState(
+            title: 'No requests yet',
+            description: 'أنشئ أول طلب وظيفي لبدء متابعته هنا.',
+            icon: Icons.description_outlined,
+            actionLabel: 'إنشاء طلب',
+            onAction: onCreate,
+          ),
+        ],
+      );
 }
 
 class _RequestsFailureView extends StatelessWidget {
@@ -228,14 +196,14 @@ class _RequestsFailureView extends StatelessWidget {
   final VoidCallback onRetry;
   @override
   Widget build(BuildContext context) => ListView(
-    padding: const EdgeInsetsDirectional.all(PortalSpacing.md),
-    children: [
-      PortalErrorState(
-        title: 'Unable to load requests',
-        description: message,
-        retryLabel: 'Try again',
-        onRetry: onRetry,
-      ),
-    ],
-  );
+        padding: const EdgeInsetsDirectional.all(PortalSpacing.md),
+        children: [
+          PortalErrorState(
+            title: 'تعذر تحميل الطلبات',
+            description: message,
+            retryLabel: 'Try again',
+            onRetry: onRetry,
+          ),
+        ],
+      );
 }

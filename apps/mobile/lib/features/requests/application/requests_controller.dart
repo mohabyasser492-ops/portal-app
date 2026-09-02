@@ -7,16 +7,16 @@ import 'requests_providers.dart';
 import 'requests_state.dart';
 import 'requests_status.dart';
 
-final requestsControllerProvider = NotifierProvider<RequestsController, RequestsState>(
-  RequestsController.new,
-);
+final requestsControllerProvider =
+    NotifierProvider<RequestsController, RequestsState>(RequestsController.new);
 
 class RequestsController extends Notifier<RequestsState> {
   @override
   RequestsState build() => RequestsState.initial();
 
   Future<void> loadRequests() async {
-    if (state.status == RequestsStatus.loading || state.status == RequestsStatus.submitting) {
+    if (state.status == RequestsStatus.loading ||
+        state.status == RequestsStatus.submitting) {
       return;
     }
     state = RequestsState.loading(
@@ -37,7 +37,9 @@ class RequestsController extends Notifier<RequestsState> {
         );
       }
     } catch (_) {
-      state = RequestsState.failure('Unable to load requests. Please try again.');
+      state = RequestsState.failure(
+        'Unable to load requests. Please try again.',
+      );
     }
   }
 
@@ -73,9 +75,10 @@ class RequestsController extends Notifier<RequestsState> {
     final previous = state;
     state = RequestsState.submitting(requests: previous.requests);
     try {
-      final created = await ref
-          .read(requestsRepositoryProvider)
-          .createRequest(type: type, description: trimmedDescription);
+      final created = await ref.read(requestsRepositoryProvider).createRequest(
+            type: type,
+            description: trimmedDescription,
+          );
       final updated = [created, ...previous.requests];
       state = RequestsState.success(
         requests: updated,

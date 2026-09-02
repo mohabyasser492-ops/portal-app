@@ -28,24 +28,24 @@ class RequestsFilterBar extends StatelessWidget {
       runSpacing: PortalSpacing.sm,
       children: [
         _FilterDropdown<PortalRequestStatus>(
-          label: selectedStatus == null ? 'All statuses' : _statusLabel(selectedStatus!),
+          label: selectedStatus == null ? 'كل الحالات' : _statusLabel(selectedStatus!),
           value: selectedStatus,
           items: [null, ...PortalRequestStatus.values],
-          itemLabel: (value) => value == null ? 'All statuses' : _statusLabel(value),
+          itemLabel: (value) => value == null ? 'كل الحالات' : _statusLabel(value),
           onChanged: enabled ? onStatusSelected : null,
         ),
         _FilterDropdown<RequestType>(
-          label: selectedType == null ? 'All request types' : _typeLabel(selectedType!),
+          label: selectedType == null ? 'كل أنواع الطلبات' : _typeLabel(selectedType!),
           value: selectedType,
           items: [null, ...RequestType.values],
-          itemLabel: (value) => value == null ? 'All request types' : _typeLabel(value),
+          itemLabel: (value) => value == null ? 'كل أنواع الطلبات' : _typeLabel(value),
           onChanged: enabled ? onTypeSelected : null,
         ),
         if (selectedStatus != null || selectedType != null)
           OutlinedButton.icon(
             onPressed: enabled ? onClear : null,
             icon: const Icon(Icons.clear),
-            label: const Text('Clear filters'),
+            label: const Text('مسح التصفية'),
           ),
       ],
     );
@@ -53,13 +53,7 @@ class RequestsFilterBar extends StatelessWidget {
 }
 
 class _FilterDropdown<T> extends StatelessWidget {
-  const _FilterDropdown({
-    required this.label,
-    required this.value,
-    required this.items,
-    required this.itemLabel,
-    required this.onChanged,
-  });
+  const _FilterDropdown({required this.label, required this.value, required this.items, required this.itemLabel, required this.onChanged});
   final String label;
   final T? value;
   final List<T?> items;
@@ -74,28 +68,26 @@ class _FilterDropdown<T> extends StatelessWidget {
         hint: Text(label),
         onChanged: onChanged,
         borderRadius: BorderRadius.circular(PortalRadius.md),
-        items: items
-            .map((item) => DropdownMenuItem<T?>(value: item, child: Text(itemLabel(item))))
-            .toList(),
+        items: items.map((item) => DropdownMenuItem<T?>(value: item, child: Text(itemLabel(item)))).toList(),
       ),
     );
   }
 }
 
 String _statusLabel(PortalRequestStatus status) => switch (status) {
-  PortalRequestStatus.draft => 'Draft',
-  PortalRequestStatus.submitted => 'Submitted',
-  PortalRequestStatus.inReview => 'In review',
-  PortalRequestStatus.approved => 'Approved',
-  PortalRequestStatus.rejected => 'Rejected',
-  PortalRequestStatus.cancelled => 'Cancelled',
-};
+      PortalRequestStatus.draft => 'مسودة',
+      PortalRequestStatus.submitted => 'مُقدّم',
+      PortalRequestStatus.inReview => 'قيد المراجعة',
+      PortalRequestStatus.approved => 'معتمد',
+      PortalRequestStatus.rejected => 'مرفوض',
+      PortalRequestStatus.cancelled => 'ملغي',
+    };
 
 String _typeLabel(RequestType type) => switch (type) {
-  RequestType.leave => 'Leave',
-  RequestType.employmentLetter => 'Employment letter',
-  RequestType.salaryCertificate => 'Salary certificate',
-  RequestType.profileUpdate => 'Profile update',
-  RequestType.payrollInquiry => 'Payroll inquiry',
-  RequestType.generalInquiry => 'General inquiry',
-};
+      RequestType.leave => 'إجازة',
+      RequestType.employmentLetter => 'خطاب جهة العمل',
+      RequestType.salaryCertificate => 'شهادة راتب',
+      RequestType.profileUpdate => 'تحديث الملف الشخصي',
+      RequestType.payrollInquiry => 'استفسار رواتب',
+      RequestType.generalInquiry => 'استفسار عام',
+    };

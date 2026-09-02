@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'localization/app_localizations.dart';
+import 'localization/portal_locale_provider.dart';
+
 import '../features/authentication/application/authentication_controller.dart';
 import '../features/authentication/application/authentication_state.dart';
 import 'router/authentication_redirect_store.dart';
@@ -97,9 +100,14 @@ class _PortalAppState extends ConsumerState<PortalApp> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = ref.watch(portalLocaleProvider);
+
     return MaterialApp.router(
-      title: 'Portal App',
+      title: 'AMOC Portal',
       debugShowCheckedModeBanner: false,
+      locale: locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: PortalTheme.light,
       routerConfig: _router,
     );

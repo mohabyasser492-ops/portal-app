@@ -9,9 +9,9 @@ import 'features/home/data/fake_home_repository.dart';
 import 'features/profile/application/profile_providers.dart';
 import 'features/profile/data/fake_profile_repository.dart';
 import 'features/services/application/services_catalog_providers.dart';
-import 'features/services/data/fake_services_repository.dart';
 import 'features/requests/application/requests_providers.dart';
 import 'features/requests/data/fake_requests_repository.dart';
+import 'features/services/data/fake_services_repository.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +25,9 @@ void main() {
   runApp(
     ProviderScope(
       overrides: [
-        authenticationRepositoryProvider.overrideWithValue(authenticationRepository),
+        authenticationRepositoryProvider.overrideWithValue(
+          authenticationRepository,
+        ),
         homeRepositoryProvider.overrideWithValue(homeRepository),
         profileRepositoryProvider.overrideWithValue(FakeProfileRepository()),
         servicesRepositoryProvider.overrideWithValue(servicesRepository),

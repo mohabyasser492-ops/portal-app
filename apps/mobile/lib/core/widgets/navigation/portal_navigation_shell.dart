@@ -2,35 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../app/router/portal_route_names.dart';
 import '../../../app/theme/portal_design_system.dart';
 import '../../../features/authentication/application/authentication_controller.dart';
 
-/// Number of primary destinations displayed by the navigation shell.
 const int portalNavigationDestinationCount = 4;
-
-/// Screen width at which the navigation shell changes from bottom navigation
-/// to a navigation rail.
 const double portalNavigationRailBreakpoint = 720;
 
-/// Primary destinations available in Portal App.
-///
-/// The order must remain synchronized with:
-///
-/// - GoRouter stateful branches
-/// - NavigationBar destinations
-/// - NavigationRail destinations
-enum PortalNavigationDestination { home, services, requests, profile }
+enum PortalNavigationDestination { home, quickAccess, activity, profile }
 
-/// Responsive navigation shell used by the authenticated application.
-///
-/// Compact screens use a bottom [NavigationBar].
-/// Wide screens use a [NavigationRail].
-///
-/// The application bar provides actions for:
-///
-/// - Opening the design-system preview
-/// - Signing out of the authenticated session
 class PortalNavigationShell extends ConsumerWidget {
   const PortalNavigationShell({
     required this.currentIndex,
@@ -38,56 +17,91 @@ class PortalNavigationShell extends ConsumerWidget {
     required this.child,
     this.showAppBar = true,
     super.key,
-  }) : assert(
-         currentIndex >= 0 && currentIndex < portalNavigationDestinationCount,
-         'currentIndex must reference a valid navigation destination.',
-       );
+  });
 
-  /// Index of the currently selected destination.
   final int currentIndex;
-
-  /// Called when the user selects a different destination.
   final ValueChanged<int> onDestinationSelected;
-
-  /// Active route content displayed inside the navigation shell.
   final Widget child;
-
-  /// Whether the shared application bar is displayed.
   final bool showAppBar;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final width = MediaQuery.sizeOf(context).width;
-
-    final useNavigationRail = width >= portalNavigationRailBreakpoint;
+    final useRail = width >= portalNavigationRailBreakpoint;
 
     return Scaffold(
-      appBar: showAppBar ? _buildAppBar(context: context, ref: ref) : null,
-      body: useNavigationRail ? _buildWideLayout() : child,
-      bottomNavigationBar: useNavigationRail ? null : _buildNavigationBar(),
+      appBar: showAppBar ? _buildAppBar(context, ref) : null,
+      body: useRail ? _buildWideLayout() : child,
+      bottomNavigationBar: useRail ? null : _buildNavigationBar(),
     );
   }
 
-  PreferredSizeWidget _buildAppBar({
-    required BuildContext context,
-    required WidgetRef ref,
-  }) {
+  PreferredSizeWidget _buildAppBar(BuildContext context, WidgetRef ref) {
     return AppBar(
-      title: const Text('Portal App'),
+      titleSpacing: PortalSpacing.md,
+      title: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: PortalColors.brand800,
+              borderRadius: BorderRadius.circular(PortalRadius.sm),
+            ),
+            alignment: Alignment.center,
+            child: const Text(
+              'A',
+              style: TextStyle(
+                color: PortalColors.neutral0,
+                fontWeight: FontWeight.w800,
+                fontSize: 18,
+              ),
+            ),
+          ),
+          const SizedBox(width: PortalSpacing.sm),
+          Text('AMOC Portal', style: Theme.of(context).textTheme.titleLarge),
+        ],
+      ),
       actions: [
         IconButton(
-          tooltip: 'Open design system',
-          onPressed: () {
-            context.pushNamed(PortalRouteNames.designSystem);
-          },
-          icon: const Icon(Icons.palette_outlined),
+          tooltip: 'Notifications',
+          onPressed: () => _showNotifications(context),
+          icon: const Icon(Icons.notifications_none_outlined),
         ),
-        IconButton(
-          tooltip: 'Sign out',
-          onPressed: () {
-            ref.read(authenticationControllerProvider.notifier).signOut();
+        PopupMenuButton<String>(
+          tooltip: 'Account',
+          onSelected: (value) {
+            if (value == 'profile') {
+              context.go('/profile');
+            } else if (value == 'signout') {
+              ref.read(authenticationControllerProvider.notifier).signOut();
+            }
           },
-          icon: const Icon(Icons.logout_outlined),
+          itemBuilder: (context) => const [
+            PopupMenuItem(value: 'profile', child: Text('الملف الشخصي')),
+            PopupMenuItem(value: 'signout', child: Text('تسجيل الخروج')),
+          ],
+          child: Padding(
+            padding: const EdgeInsetsDirectional.only(end: PortalSpacing.md),
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: PortalColors.brand50,
+                shape: BoxShape.circle,
+                border: Border.all(color: PortalColors.borderSubtle),
+              ),
+              alignment: Alignment.center,
+              child: const Text(
+                'FA',
+                style: TextStyle(
+                  color: PortalColors.brand800,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -100,37 +114,31 @@ class PortalNavigationShell extends ConsumerWidget {
           child: NavigationRail(
             selectedIndex: currentIndex,
             onDestinationSelected: _handleDestinationSelection,
-            labelType: NavigationRailLabelType.all,
-            groupAlignment: -1,
             destinations: const [
               NavigationRailDestination(
                 icon: Icon(Icons.home_outlined),
                 selectedIcon: Icon(Icons.home),
-                label: Text('Home'),
+                label: Text('الرئيسية'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.apps_outlined),
-                selectedIcon: Icon(Icons.apps),
-                label: Text('Services'),
+                icon: Icon(Icons.bolt_outlined),
+                selectedIcon: Icon(Icons.bolt),
+                label: Text('وصول سريع'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.description_outlined),
-                selectedIcon: Icon(Icons.description),
-                label: Text('Requests'),
+                icon: Icon(Icons.analytics_outlined),
+                selectedIcon: Icon(Icons.analytics),
+                label: Text('النشاط'),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.person_outline),
                 selectedIcon: Icon(Icons.person),
-                label: Text('Profile'),
+                label: Text('الملف الشخصي'),
               ),
             ],
           ),
         ),
-        const VerticalDivider(
-          width: 1,
-          thickness: 1,
-          color: PortalColors.borderSubtle,
-        ),
+        const VerticalDivider(width: 1, thickness: 1, color: PortalColors.borderSubtle),
         Expanded(child: child),
       ],
     );
@@ -144,22 +152,22 @@ class PortalNavigationShell extends ConsumerWidget {
         NavigationDestination(
           icon: Icon(Icons.home_outlined),
           selectedIcon: Icon(Icons.home),
-          label: 'Home',
+          label: 'الرئيسية',
         ),
         NavigationDestination(
-          icon: Icon(Icons.apps_outlined),
-          selectedIcon: Icon(Icons.apps),
-          label: 'Services',
+          icon: Icon(Icons.bolt_outlined),
+          selectedIcon: Icon(Icons.bolt),
+          label: 'وصول سريع',
         ),
         NavigationDestination(
-          icon: Icon(Icons.description_outlined),
-          selectedIcon: Icon(Icons.description),
-          label: 'Requests',
+          icon: Icon(Icons.analytics_outlined),
+          selectedIcon: Icon(Icons.analytics),
+          label: 'النشاط',
         ),
         NavigationDestination(
           icon: Icon(Icons.person_outline),
           selectedIcon: Icon(Icons.person),
-          label: 'Profile',
+          label: 'الملف الشخصي',
         ),
       ],
     );
@@ -169,11 +177,78 @@ class PortalNavigationShell extends ConsumerWidget {
     if (index == currentIndex) {
       return;
     }
-
     if (index < 0 || index >= portalNavigationDestinationCount) {
       return;
     }
-
     onDestinationSelected(index);
+  }
+
+  void _showNotifications(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      backgroundColor: PortalColors.surfacePrimary,
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(PortalSpacing.lg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('الإشعارات', style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: PortalSpacing.md),
+                _NotificationRow(
+                  icon: Icons.warning_amber_outlined,
+                  title: 'تنبيه سلامة جديد',
+                  subtitle: 'يرجى مراجعة تحديثات إجراءات السلامة.',
+                  color: PortalColors.statusError,
+                ),
+                const SizedBox(height: PortalSpacing.sm),
+                _NotificationRow(
+                  icon: Icons.schedule_outlined,
+                  title: 'طلب إضافي قيد المراجعة',
+                  subtitle: 'طلبك الأخير تم استلامه بنجاح.',
+                  color: PortalColors.statusWarning,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _NotificationRow extends StatelessWidget {
+  const _NotificationRow({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: DecoratedBox(
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.10),
+          borderRadius: BorderRadius.circular(PortalRadius.sm),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(PortalSpacing.sm),
+          child: Icon(icon, color: color),
+        ),
+      ),
+      title: Text(title),
+      subtitle: Text(subtitle),
+    );
   }
 }

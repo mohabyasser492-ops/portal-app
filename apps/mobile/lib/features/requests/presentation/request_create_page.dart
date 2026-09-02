@@ -33,17 +33,17 @@ class _RequestCreatePageState extends ConsumerState<RequestCreatePage> {
   Widget build(BuildContext context) {
     final submitting = ref.watch(requestsControllerProvider.select((state) => state.isSubmitting));
     return Scaffold(
-      appBar: AppBar(title: const Text('New Request')),
+      appBar: AppBar(title: const Text('طلب جديد')),
       body: SafeArea(
         child: Form(
           key: _formKey,
           child: ListView(
             padding: const EdgeInsetsDirectional.all(PortalSpacing.md),
             children: [
-              Text('Request details', style: Theme.of(context).textTheme.headlineSmall),
+              Text('تفاصيل الطلب', style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(height: PortalSpacing.sm),
               Text(
-                'Choose a request type and tell us what you need.',
+                'اختر نوع الطلب واكتب ما تحتاجه.',
                 style: Theme.of(
                   context,
                 ).textTheme.bodyMedium?.copyWith(color: PortalColors.textSecondary),
@@ -51,7 +51,7 @@ class _RequestCreatePageState extends ConsumerState<RequestCreatePage> {
               const SizedBox(height: PortalSpacing.xl),
               DropdownButtonFormField<RequestType>(
                 initialValue: _type,
-                decoration: const InputDecoration(labelText: 'Request type'),
+                decoration: const InputDecoration(labelText: 'نوع الطلب'),
                 items: RequestType.values
                     .map((type) => DropdownMenuItem(value: type, child: Text(_typeLabel(type))))
                     .toList(),
@@ -65,12 +65,12 @@ class _RequestCreatePageState extends ConsumerState<RequestCreatePage> {
                 enabled: !submitting,
                 maxLength: 1000,
                 decoration: const InputDecoration(
-                  labelText: 'Description',
-                  hintText: 'Describe your request and include any relevant details.',
+                  labelText: 'التفاصيل',
+                  hintText: 'اكتب تفاصيل طلبك وأي معلومات مرتبطة به.',
                   alignLabelWithHint: true,
                 ),
                 validator: (value) => value == null || value.trim().length < 5
-                    ? 'Please enter at least 5 characters.'
+                    ? 'يرجى إدخال 5 أحرف على الأقل.'
                     : null,
               ),
               const SizedBox(height: PortalSpacing.lg),
@@ -83,7 +83,7 @@ class _RequestCreatePageState extends ConsumerState<RequestCreatePage> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.send_outlined),
-                label: Text(submitting ? 'Submitting...' : 'Submit request'),
+                label: Text(submitting ? 'جاري التقديم...' : 'تقديم الطلب'),
               ),
             ],
           ),
@@ -111,11 +111,11 @@ class _RequestCreatePageState extends ConsumerState<RequestCreatePage> {
   }
 
   static String _typeLabel(RequestType type) => switch (type) {
-    RequestType.leave => 'Leave',
-    RequestType.employmentLetter => 'Employment letter',
-    RequestType.salaryCertificate => 'Salary certificate',
-    RequestType.profileUpdate => 'Profile update',
-    RequestType.payrollInquiry => 'Payroll inquiry',
-    RequestType.generalInquiry => 'General inquiry',
+    RequestType.leave => 'إجازة',
+    RequestType.employmentLetter => 'خطاب جهة العمل',
+    RequestType.salaryCertificate => 'شهادة راتب',
+    RequestType.profileUpdate => 'تحديث الملف الشخصي',
+    RequestType.payrollInquiry => 'استفسار رواتب',
+    RequestType.generalInquiry => 'استفسار عام',
   };
 }

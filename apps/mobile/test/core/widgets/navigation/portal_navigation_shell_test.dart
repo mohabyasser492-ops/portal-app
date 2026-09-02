@@ -177,7 +177,7 @@ void main() {
 
       await tester.pump();
 
-      expect(selectedIndex, PortalNavigationDestination.services.index);
+      expect(selectedIndex, PortalNavigationDestination.values[1].index);
     });
 
     testWidgets('selects a wide destination', (tester) async {
@@ -200,7 +200,7 @@ void main() {
 
       await tester.pump();
 
-      expect(selectedIndex, PortalNavigationDestination.requests.index);
+      expect(selectedIndex, PortalNavigationDestination.values[2].index);
     });
 
     testWidgets('does not select the active destination again', (tester) async {

@@ -14,10 +14,10 @@ final class PortalRequest {
     required this.status,
     required this.createdAt,
     required this.updatedAt,
-  }) : assert(id != '', 'id cannot be empty.'),
-       assert(referenceNumber != '', 'referenceNumber cannot be empty.'),
-       assert(title != '', 'title cannot be empty.'),
-       assert(description != '', 'description cannot be empty.');
+  })  : assert(id != '', 'id cannot be empty.'),
+        assert(referenceNumber != '', 'referenceNumber cannot be empty.'),
+        assert(title != '', 'title cannot be empty.'),
+        assert(description != '', 'description cannot be empty.');
 
   final String id;
   final String referenceNumber;
@@ -69,6 +69,14 @@ final class PortalRequest {
           other.updatedAt == updatedAt;
 
   @override
-  int get hashCode =>
-      Object.hash(id, referenceNumber, type, title, description, status, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+        id,
+        referenceNumber,
+        type,
+        title,
+        description,
+        status,
+        createdAt,
+        updatedAt,
+      );
 }

@@ -2,27 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/widgets/navigation/portal_navigation_shell.dart';
+import '../../features/quick_access/presentation/quick_access_page.dart';
 import '../../features/authentication/presentation/authentication_loading_page.dart';
 import '../../features/authentication/presentation/sign_in_route_page.dart';
+import '../../features/benefits/presentation/benefits_page.dart';
 import '../../features/design_system/presentation/design_system_preview_page.dart';
+import '../../features/field_operations/presentation/field_operations_page.dart';
 import '../../features/home/presentation/home_page.dart';
 import '../../features/not_found/presentation/not_found_page.dart';
+import '../../features/overtime/presentation/overtime_page.dart';
+import '../../features/payroll/presentation/payroll_page.dart';
 import '../../features/profile/presentation/profile_page.dart';
-import '../../features/requests/domain/request_type.dart';
+import '../../features/requests/presentation/requests_page.dart';
 import '../../features/requests/presentation/request_create_page.dart';
 import '../../features/requests/presentation/request_details_page.dart';
-import '../../features/requests/presentation/requests_page.dart';
 import '../../features/services/presentation/services_page.dart';
+import '../../features/car_service/presentation/car_service_page.dart';
+import '../../features/shift_management/presentation/shift_management_page.dart';
+import '../../features/training/presentation/training_page.dart';
 import 'authentication_redirect_guard.dart';
 import 'authentication_redirect_store.dart';
 import 'authentication_router_refresh_notifier.dart';
 import 'portal_route_names.dart';
 import 'portal_route_paths.dart';
 
-/// Creates the central Portal App router.
-///
-/// Each invocation creates fresh navigator keys, preventing navigation state
-/// from leaking between application instances and widget tests.
 GoRouter createPortalRouter({
   String initialLocation = PortalRoutePaths.home,
   required AuthenticationRouterRefreshNotifier refreshNotifier,
@@ -57,17 +60,71 @@ GoRouter createPortalRouter({
         parentNavigatorKey: rootNavigatorKey,
         path: PortalRoutePaths.authenticationLoading,
         name: PortalRouteNames.authenticationLoading,
-        builder: (context, state) {
-          return const AuthenticationLoadingPage();
-        },
+        builder: (_, _) => const AuthenticationLoadingPage(),
       ),
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
         path: PortalRoutePaths.signIn,
         name: PortalRouteNames.signIn,
-        builder: (context, state) {
-          return const SignInRoutePage();
-        },
+        builder: (_, _) => const SignInRoutePage(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: PortalRoutePaths.quickAccess,
+        redirect: (_, _) => PortalRoutePaths.services,
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: PortalRoutePaths.activity,
+        redirect: (_, _) => PortalRoutePaths.requests,
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: PortalRoutePaths.serviceCatalog,
+        name: PortalRouteNames.serviceCatalog,
+        builder: (_, _) => const ServicesPage(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: PortalRoutePaths.shiftManagement,
+        name: PortalRouteNames.shiftManagement,
+        builder: (_, _) => const ShiftManagementPage(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: PortalRoutePaths.overtime,
+        name: PortalRouteNames.overtime,
+        builder: (_, _) => const OvertimePage(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: PortalRoutePaths.carService,
+        name: PortalRouteNames.carService,
+        builder: (_, _) => const CarServicePage(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: PortalRoutePaths.payroll,
+        name: PortalRouteNames.payroll,
+        builder: (_, _) => const PayrollPage(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: PortalRoutePaths.training,
+        name: PortalRouteNames.training,
+        builder: (_, _) => const TrainingPage(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: PortalRoutePaths.benefits,
+        name: PortalRouteNames.benefits,
+        builder: (_, _) => const BenefitsPage(),
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: PortalRoutePaths.fieldOperations,
+        name: PortalRouteNames.fieldOperations,
+        builder: (_, _) => const FieldOperationsPage(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -89,9 +146,7 @@ GoRouter createPortalRouter({
               GoRoute(
                 path: PortalRoutePaths.home,
                 name: PortalRouteNames.home,
-                builder: (context, state) {
-                  return const HomePage();
-                },
+                builder: (_, _) => const HomePage(),
               ),
             ],
           ),
@@ -101,9 +156,7 @@ GoRouter createPortalRouter({
               GoRoute(
                 path: PortalRoutePaths.services,
                 name: PortalRouteNames.services,
-                builder: (context, state) {
-                  return const ServicesPage();
-                },
+                builder: (_, _) => const QuickAccessPage(),
               ),
             ],
           ),
@@ -113,18 +166,11 @@ GoRouter createPortalRouter({
               GoRoute(
                 path: PortalRoutePaths.requests,
                 name: PortalRouteNames.requests,
-                builder: (context, state) => const RequestsPage(),
+                builder: (_, _) => const RequestsPage(),
                 routes: [
-                  GoRoute(
-                    path: 'create',
-                    name: 'request-create',
-                    builder: (context, state) => RequestCreatePage(
-                      initialType: state.extra is RequestType ? state.extra as RequestType : null,
-                    ),
-                  ),
+                  GoRoute(path: 'create', builder: (_, _) => const RequestCreatePage()),
                   GoRoute(
                     path: ':requestId',
-                    name: 'request-details',
                     builder: (context, state) =>
                         RequestDetailsPage(requestId: state.pathParameters['requestId']!),
                   ),
@@ -138,9 +184,7 @@ GoRouter createPortalRouter({
               GoRoute(
                 path: PortalRoutePaths.profile,
                 name: PortalRouteNames.profile,
-                builder: (context, state) {
-                  return const ProfilePage();
-                },
+                builder: (_, _) => const ProfilePage(),
               ),
             ],
           ),
@@ -150,9 +194,7 @@ GoRouter createPortalRouter({
         parentNavigatorKey: rootNavigatorKey,
         path: PortalRoutePaths.designSystem,
         name: PortalRouteNames.designSystem,
-        builder: (context, state) {
-          return const DesignSystemPreviewPage();
-        },
+        builder: (_, _) => const DesignSystemPreviewPage(),
       ),
     ],
     errorBuilder: (context, state) {
