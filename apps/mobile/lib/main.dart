@@ -8,6 +8,8 @@ import 'features/home/application/home_providers.dart';
 import 'features/home/data/fake_home_repository.dart';
 import 'features/profile/application/profile_providers.dart';
 import 'features/profile/data/fake_profile_repository.dart';
+import 'features/services/application/services_catalog_providers.dart';
+import 'features/services/data/fake_services_repository.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +17,7 @@ void main() {
   final authenticationRepository = DevelopmentAuthenticationRepository();
 
   final homeRepository = FakeHomeRepository();
+  final servicesRepository = FakeServicesRepository();
 
   runApp(
     ProviderScope(
@@ -24,6 +27,7 @@ void main() {
         ),
         homeRepositoryProvider.overrideWithValue(homeRepository),
         profileRepositoryProvider.overrideWithValue(FakeProfileRepository()),
+        servicesRepositoryProvider.overrideWithValue(servicesRepository),
       ],
       child: const PortalApp(),
     ),
